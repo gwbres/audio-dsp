@@ -35,6 +35,15 @@ begin
 	-----------------------
 	-- driver registers 
 	-----------------------
+
+	-----------------------------
+	-- 100M > 48M clk synthesizer
+	-----------------------------
+	adau_clk48_generator: adau_clk100_clk48_synth
+	port map (
+		clk48 =>
+		clk24 =>
+	);
 	
 	-----------------------
 	-- I2C
