@@ -1,10 +1,10 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
-entity i2s_tb is
-end i2s_tb;
+entity i2s_rx_tb is
+end i2s_rx_tb;
 
-architecture rtl of i2s_tb is
+architecture rtl of i2s_rx_tb is
 
 	signal clk: std_logic := '0';
 
@@ -77,18 +77,17 @@ begin
 	end if;
 	end process;
 		
-	dut: entity work.i2s
+	dut: entity work.i2s_rx
 	generic map (
 		G_DATA_WIDTH => 8
 	) port map (
 		clk => clk,
-		-- stereo/out
-		stereo_out_valid => stereo_out_valid,
-		stereo_out_data => stereo_out_data,
+		-- stereo
+		stereo_valid => stereo_out_valid,
+		stereo_data => stereo_out_data,
 		-- I2S
 		i2s_bclk => i2s_bclk,
 		i2s_din => i2s_din_reg,
-		i2s_dout => i2s_dout,
 		i2s_lr => i2s_lr
 	);
 

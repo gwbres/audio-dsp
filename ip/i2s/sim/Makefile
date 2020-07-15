@@ -1,9 +1,9 @@
 GHDL = ghdl
 GTKWAVE = /usr/bin/gtkwave
 
-TESTBENCH = i2s_tb
+TESTBENCH = i2s_rx_tb
 
-SOURCES = ../src/i2s.vhd
+SOURCES = ../src/i2s_rx.vhd
 
 all: run_sim 
 
