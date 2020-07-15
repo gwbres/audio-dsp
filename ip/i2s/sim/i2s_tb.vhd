@@ -22,8 +22,8 @@ architecture rtl of i2s_tb is
 	constant DIN_DATA_LUT: data_lut := (x"AA",x"55");
 	signal is_odd: std_logic := '0';
 
-	signal data_out_valid: std_logic;
-	signal data_l_out, data_r_out: std_logic_vector(7 downto 0);
+	signal stereo_out_valid: std_logic;
+	signal stereo_out_data: std_logic_vector(15 downto 0);
 begin
 	
 	clk <= not(clk) after 5.0 ns;
@@ -83,9 +83,8 @@ begin
 	) port map (
 		clk => clk,
 		-- stereo/out
-		data_out_valid => data_out_valid,
-		data_l_out => data_l_out,
-		data_r_out => data_r_out,
+		stereo_out_valid => stereo_out_valid,
+		stereo_out_data => stereo_out_data,
 		-- I2S
 		i2s_bclk => i2s_bclk,
 		i2s_din => i2s_din_reg,

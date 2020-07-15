@@ -17,9 +17,8 @@ port (
 	----------------------
    -- STEREO DATA/out
 	----------------------
-	data_out_valid: out std_logic;
-   data_l_out: out std_logic_vector(G_DATA_WIDTH-1 downto 0);   
-   data_r_out: out std_logic_vector(G_DATA_WIDTH-1 downto 0);
+	stereo_out_valid: out std_logic;
+   stereo_out_data: out std_logic_vector(2*G_DATA_WIDTH-1 downto 0);
 	----------------------
    -- I2S
 	----------------------
@@ -108,9 +107,8 @@ begin
 	end if;
 	end process;
 
-	data_out_valid <= valid_reg;
-	data_l_out <= data_l_reg;
-	data_r_out <= data_r_reg;
+	stereo_out_valid <= valid_reg;
+	stereo_out_data <= data_l_reg & data_r_reg;
 
 	--------------------------
 	-- I2S TX
