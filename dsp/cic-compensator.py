@@ -79,20 +79,30 @@ def main (argv):
 	Hsb -= max(Hsb)
 	Hsb += Hpb[-1]
 	ax1.plot(fsb, Hsb, '--', label='Compensator Stop-Band')
+	
+	# compensator / total new nyquist band
+	Hcomp = Hsb[::-1]
+	Hcomp = np.concatenate((Hcomp, Hpb[::-1]))
+	Hcomp = np.concatenate((Hcomp, Hpb))
+	Hcomp = np.concatenate((Hcomp, Hsb))
 
 	# CIC response within new nyquist band
-	f = np.linspace(0, 1/R, len(Hpb)+len(Hsb))
+	f = np.linspace(-1/R, 1/R, len(Hcomp))
 	num = np.sin(2*np.pi*f*R/2)
 	denom = np.sin(2*np.pi*f/2)
 	Hcic = 10*np.log10(np.power(num/denom, N))
-	Hcic -= Hcic[1]
-	ax1.plot(f, Hcic, '--', color='black', label='CIC filter')
+	Hcic -= max(Hcic)
 
+	Htot = Hcic + Hcomp
+	
+	ax1.plot(f, Htot, label='Total CIC+FIR response')
+	ax1.plot(f, Hcic, '--', color='black', label='CIC filter')
+	
 	# plot compensated CIC
 	# within new nyquist band
-	Hcomp = np.concatenate((Hpb, Hsb))
-	Htot = Hcic + Hcomp
-	ax1.plot(f, Htot, label='Total CIC+FIR response')
+	#Htot = Hcic + Hcomp
+	#Htot = np.concatenate(Htot[::-1], Htot)
+	#ax1.plot(f, Htot, label='Total CIC+FIR response')
 	
 	ax1.set_title('Compensated CIC filter with BW {:d}%'.format(bw))
 
