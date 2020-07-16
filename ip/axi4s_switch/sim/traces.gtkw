@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Thu Jul 16 07:39:59 2020
+[*]
+[dumpfile] "/hdd/git/audio-dsp/ip/axi4s_switch/sim/traces.vcd"
+[dumpfile_mtime] "Thu Jul 16 07:36:21 2020"
+[dumpfile_size] 20332544
+[savefile] "/hdd/git/audio-dsp/ip/axi4s_switch/sim/traces.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -118 -87
+*-28.000000 505000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 207
+[signals_width] 198
+[sst_expanded] 1
+[sst_vpaned_height] 154
+@28
+testbench.clk
+testbench.dut.sel[0]
+@201
+-STREAMs (in)
+@28
+testbench.streams_in_valid[1:0]
+@22
+testbench.streams_in_data[15:0]
+@200
+-STREAM (out)
+@28
+testbench.stream_out_valid
+@22
+testbench.stream_out_data[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
