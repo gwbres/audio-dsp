@@ -43,22 +43,19 @@ g_cic_decimation_filter_gen: generate if (G_IS_DECIMATOR) generate
 
 else
 
-	data_out_valid <= '0';
-	data_out_data <= (others => '0');
-	
-	--cic_interp_filter_inst: entity work.cic_interpolator
-	--generic map (
-	--	G_CIC_R => G_CIC_R,
-	--	G_CIC_N => G_CIC_N,
-	--	G_CIC_M => G_CIC_M,
-	--	G_DATA_WIDTH => G_DATA_WIDTH
-	--) port map (
-	--	clk => clk,
-	--	data_in_valid => data_in_valid,
-	--	data_in_data => data_in_data,
-	--	data_out_valid => data_out_valid,
-	--	data_out_data => data_out_data
-	--);
+	cic_interp_filter_inst: entity work.cic_interpolator
+	generic map (
+		G_CIC_R => G_CIC_R,
+		G_CIC_N => G_CIC_N,
+		G_CIC_M => G_CIC_M,
+		G_DATA_WIDTH => G_DATA_WIDTH
+	) port map (
+		clk => clk,
+		data_in_valid => data_in_valid,
+		data_in_data => data_in_data,
+		data_out_valid => data_out_valid,
+		data_out_data => data_out_data
+	);
 
 end if;
 
