@@ -65,6 +65,7 @@ filter, feeding a 1.152 Gb/s stream to the TX side.
 The CIC interpolation filter is strictly symmetrical
 to the CIC decimation filter.
 
+\newpage
 \subsection{CIC filters}
 
 CIC filter being defined by $R, M, N$ parameters where
@@ -81,7 +82,16 @@ $R = 128$. \\
 
 Both the interpolation \& decimation filters
 are comprised of a N stages of integration filters
-\& comb filters.
+\& comb filters. \\
+
+The {\tt \$git/dsp/cic.py} Python script 
+can plot the frequency response
+of a given CIC filter:
+
+\begin{verbatim}
+   $git/dsp/cic.py R=4 M=1 N=12
+   $git/dsp/cic.py R=8 M=2 N=4
+\end{verbatim}
 
 %\begin{center}
 %	\includegraphics[width=0.75\linewidth]{cic_filters.pdf} \\
@@ -92,40 +102,67 @@ are comprised of a N stages of integration filters
 %\end{center}
 
 \begin{itemize}
-	\item an integrator stage is defined as $H(z) = \frac{1}{z^{-1}}$.\\
-	\item a comb stage is defined as $H(z) = z^{-M}$.\\
-	\item total CIC filter response is therefore $H(z) = \left| \frac{z^-M}{z^{-1}} \right|^N$
+	\item an integrator stage is defined as $H(z) = \frac{1}{1 - z^{-1}}$\\
+	
+	\item a comb stage is defined as $H(z) = 1 - z^{-M}$\\
+	
+	\item total CIC filter response is therefore $H(z) = \left| \frac{1 - z^-M}{1 - z^{-1}} \right|^N$
+	
+	\item the total magnitude response is approximated by
+	$H(\nu) = \left| \frac{\sin(R M \pi \nu)}{R M \sin(\pi \nu)} \right|^N$
+
+	\item the worst alias is encountered at frequency $\nu = \frac{3}{2MR}$
 \end{itemize}
 
-Increasing N (number of stages) increases the filter performance,
-therefore the maximum alias rejection encountered at frequency ... \\
+Increasing N (number of stages) increases the filter performance:
+
+\begin{center}
+	\begin{minipage}{0.49\linewidth}
+		\includegraphics[width=0.99\linewidth]{cic_r12_n2.pdf} \\
+		Comparing a CIC decimation filter with N=2 stages,
+		the worst alias is rejected by -13 dB
+	\end{minipage}
+	\begin{minipage}{0.49\linewidth}
+		\includegraphics[width=0.99\linewidth]{cic_r12_n8.pdf} \\
+		Increasing the number of stages to N=8
+		improves the worst alias rejection to -53 dB
+	\end{minipage}
+\end{center}
 
 We fix $N=8$ in our case, not to consume too much ressources.
 This will give a rejection of
--dB for the worst alias ever encountered.
+-53 dB for the worst alias ever encountered. \\
 
-A direct CIC filter response, in this example R=4,M=1, and we compare
-N=4,N=8,N=12,N=16,N=32, has a $f(x) = \frac{sin(x)}{x}$ shape.
-Which is far from being convenient because it dramatically disturb
-the initial flat distribution. We use a compensation filter
-to compensate for this effect,
-the compensation filter response is the exact inverse
+We introduce a compensation filter (in the form of an FIR
+filter) to compensate for the  $f(\nu) = \frac{sin(\nu)}{\nu}$ shape
+of the CIC frequency response (as seen in previous plot). \\
+
+If we do not compensator for the CIC response, the entire bandwidth
+becomes almost unusable. \\
+
+The compensation filter response is the exact inverse
 of the CIC filter response $G(z) = \frac{1}{H(z)}$ 
-in the output frequency domain.
+in the output frequency domain. \\
 
-CIC filter compensation is
-required and will be implemented in both the decimation
+\subsection{CIC compensation filter}
+
+The CIC compensation filter is designed
+using the python script {\tt \$git/dsp/cic-compensator.py}. 
+
+\begin{verbatim}
+   $git/dsp/cic-compensator.py R=4 M=1 N=12
+   $git/dsp/cic-compensator.py R=8 M=2 N=4
+\end{verbatim}
+
+CIC filter compensation 
+will be implemented in both the decimation
 \& the interpolation filter, using
 Xilinx's optimized FIR filter IP core. \\
 
-The {\tt \$git/dsp/cic.py} Python script 
-can plot the frequency response
-of a given CIC filter
+\subsection{FFT Histogram}
 
-\begin{verbatim}
-   $git/dsp/cic.py R=4 M=1 N=12
-   $git/dsp/cic.py R=8 M=2 N=4
-\end{verbatim}
+The Histogram IP core converts
+the power spectrum from the
 
 \subsection{CIC compensation filter}
 

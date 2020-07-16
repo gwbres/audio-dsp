@@ -22,20 +22,31 @@ def main (argv):
 
 		elif key == 'N':
 			N = int(value)
+	
+	# plot
+	fig, ax = plt.subplots (1,1)
+	fig.set_size_inches(8,8)
 
 	# freq axis
 	f = np.linspace(0, 1, 1024) - 1/2
+	
 	# freq response
 	num = np.sin(2*np.pi*f*R/2)
 	denom = np.sin(2*np.pi*f/2)
 	H = np.power(num / denom, N)
-
 	HdB  = 10*np.log10(H)
 	HdB -= max(HdB)
-
-	# plot
-	fig, ax = plt.subplots (1,1)
 	ax.plot(f, HdB)
+
+	# worst spur
+	xworst = 3/2/M/R
+	num = np.sin(R*M*np.pi*xworst)
+	denom = R * M * np.sin(np.pi*xworst)
+	Hworst = np.power(num/denom, N)
+	HworstdB = 10*np.log10(Hworst)
+	ax.plot(xworst, HworstdB, '+', color='black')
+	ax.text(xworst, HworstdB+3, 'Worst Alias Rejected by {:.3f} dB'.format(HworstdB))
+	
 	ax.set_xlabel('Normalized frequency')
 	ax.set_ylabel('Magnitude [dB]')
 	ax.grid(True)
