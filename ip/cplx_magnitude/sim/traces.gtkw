@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Thu Jul 16 08:29:22 2020
+[*]
+[dumpfile] "/hdd/git/audio-dsp/ip/cplx_magnitude/sim/traces.vcd"
+[dumpfile_mtime] "Thu Jul 16 08:28:46 2020"
+[dumpfile_size] 6254592
+[savefile] "/hdd/git/audio-dsp/ip/cplx_magnitude/sim/traces.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] 204 105
+*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 207
+[signals_width] 190
+[sst_expanded] 1
+[sst_vpaned_height] 154
+@28
+testbench.clk
+@200
+-Complex (in)
+@28
+testbench.cplx_ready
+testbench.cplx_valid
+@22
+testbench.cplx_data[15:0]
+@200
+-Magnitude (out)
+@28
+testbench.magnitude_valid
+@23
+testbench.magnitude_data[15:0]
+[pattern_trace] 1
+[pattern_trace] 0
