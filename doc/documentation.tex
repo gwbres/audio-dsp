@@ -30,6 +30,128 @@
 \maketitle
 \tableofcontents
 
+\newpage
+\section{System}
+
+\begin{center}
+	\includegraphics[width=0.75\linewidth]{bloc_design.pdf} \\
+	Bloc design
+\end{center}
+
+All processing is real time and synchronous to the input
+stream. The initial data rate is 1.152 Gb/s (much more than needed),
+we reduce it to a 24 kHz (a little more than needed),
+which means our internal rate is now 576 kB/s.
+Data rate reduction is done using a CIC decimation filter. \\
+
+The modulation filter as well as the
+EQ filter are controlled from the User Interface. \\
+
+The FFT processes either the
+direct RX input or the output signal.
+This allows to visualize the effect
+of the modulation \& the EQ filters.
+Switching is done in real time on user specs. \\
+
+The resulting power spectrum is converted to histogram
+\& displayed on the onboard OLED display.
+The display is 128x32 pixel wide, which in our case
+gives a spectral resolution of 187.5 Hz
+on the display, which is more than decent.
+
+The internal data stream obviously needs a final
+interpolation, this is done by a CIC interpolation
+filter, feeding a 1.152 Gb/s stream to the TX side.
+The CIC interpolation filter is strictly symmetrical
+to the CIC decimation filter.
+
+\subsection{CIC filters}
+
+CIC filter being defined by $R, M, N$ parameters where
+
+\begin{itemize}
+	\item R: decimation/interpolation factor
+	\item M: time delay, can either be 1 or 2 cycle
+	\item N: number of stages
+\end{itemize}
+
+\vspace{0.2cm}
+To reduce the initial rate from 1.152 Gb/s we fix
+$R = 128$. \\
+
+Both the interpolation \& decimation filters
+are comprised of a N stages of integration filters
+\& comb filters.
+
+%\begin{center}
+%	\includegraphics[width=0.75\linewidth]{cic_filters.pdf} \\
+%  Switching from a decimation to an interpolation is simply
+%  changing the internal ordering and obviously performing
+%  either a decimation or an interpolation in between
+%  comb/integration stages.
+%\end{center}
+
+\begin{itemize}
+	\item an integrator stage is defined as $H(z) = \frac{1}{z^{-1}}$.\\
+	\item a comb stage is defined as $H(z) = z^{-M}$.\\
+	\item total CIC filter response is therefore $H(z) = \left| \frac{z^-M}{z^{-1}} \right|^N$
+\end{itemize}
+
+Increasing N (number of stages) increases the filter performance,
+therefore the maximum alias rejection encountered at frequency ... \\
+
+We fix $N=8$ in our case, not to consume too much ressources.
+This will give a rejection of
+-dB for the worst alias ever encountered.
+
+A direct CIC filter response, in this example R=4,M=1, and we compare
+N=4,N=8,N=12,N=16,N=32, has a $f(x) = \frac{sin(x)}{x}$ shape.
+Which is far from being convenient because it dramatically disturb
+the initial flat distribution. We use a compensation filter
+to compensate for this effect,
+the compensation filter response is the exact inverse
+of the CIC filter response $G(z) = \frac{1}{H(z)}$ 
+in the output frequency domain.
+
+CIC filter compensation is
+required and will be implemented in both the decimation
+\& the interpolation filter, using
+Xilinx's optimized FIR filter IP core. \\
+
+The {\tt \$git/dsp/cic.py} Python script 
+can plot the frequency response
+of a given CIC filter
+
+\begin{verbatim}
+   $git/dsp/cic.py R=4 M=1 N=12
+   $git/dsp/cic.py R=8 M=2 N=4
+\end{verbatim}
+
+\subsection{CIC compensation filter}
+
+The CIC compensation filter is designed
+using the python script {\tt \$git/dsp/cic-compensator.py}. 
+
+\begin{verbatim}
+   $git/dsp/cic-compensator.py R=4 M=1 N=12
+   $git/dsp/cic-compensator.py R=8 M=2 N=4
+\end{verbatim}
+
+\subsection{FFT Histogram}
+
+The Histogram IP core converts
+the power spectrum from the
+magnitude IP core
+to a histogram to be displayed on the OLED. \\
+
+It is a simple mapping of the resulting
+power spectrum to a 2D array (X,Y) describing
+the power spectrum along a frequency axis. \\ 
+
+%\begin{center}
+%	\includegraphics[width=0.75\linewidth]{fft_histogram.pdf} \\
+%\end{center}
+
 \section{Simulation}
 
 Install {\tt ghdl} to easily
