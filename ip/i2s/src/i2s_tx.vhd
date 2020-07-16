@@ -1,12 +1,23 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
+library xpm;
+use     xpm.vcomponents.all;
+
 entity i2s_tx is
 generic (
 	G_DATA_WIDTH: natural := 24
 );
 port (
    clk: in std_logic;
+	rst: in std_logic;
+	-- TX buffer
+	almost_empty: out std_logic;
+	empty: out std_logic;
+	underflow: out std_logic;
+	almost_full: out std_logic;
+	full: out std_logic;
+	overflow: out std_logic;
 	----------------------
    -- STEREO DATA
 	----------------------
@@ -20,93 +31,130 @@ port (
    i2s_dout: out std_logic;
    i2s_lr: in std_logic
 );
-end i2s;
+end i2s_tx;
 
-architecture rtl of i2s is
+architecture rtl of i2s_tx is
+
+	signal fifo_full_s: std_logic;
 
 	signal bclk_z1_s: std_logic := '0';
 	signal bclk_rising_s: std_logic;
 
-	signal lr_delayed_s: std_logic := '0';
-	signal lr_delayed_z1_s: std_logic := '0';
-	signal lr_delayed_changed_s: std_logic;
+	signal i2s_lr_changed: std_logic := '0';
+	signal i2s_lr_z1: std_logic;
 
-	signal valid_reg: std_logic := '0';
-	signal bit_count_reg: natural range 0 to G_DATA_WIDTH-1 := G_DATA_WIDTH-1;
-	signal data_r_reg, data_l_reg: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
+	signal fifo_data_valid_s: std_logic;
+	signal fifo_rd_en_s: std_logic;
+	signal fifo_dout_s: std_logic_vector(2*G_DATA_WIDTH-1 downto 0);
+
+	signal pointer_reg: natural range 0 to G_DATA_WIDTH-1 := G_DATA_WIDTH-1;
 begin
+
+	stereo_in_ready <= not(fifo_full_s);
+
+	full <= fifo_full_s;
+
+	----------------------------
+	-- ASYNC TX Buffer
+	----------------------------
+	xilinx_async_fifo_inst: xpm_fifo_async
+	generic map (
+		CDC_SYNC_STAGES => 2,
+		DOUT_REST_VALUE => "0",
+		ECC_MODE => "no_ecc",
+		FIFO_MEMORY_TYPE => "auto",
+		FIFO_READ_LATENCY => 1,
+		FIFO_WRITE_DEPTH => 16,
+		FULL_RESET_VALUE => 0,
+		PROG_EMPTY_THRESH => 4,
+		PROG_FULL_THRESH => 12,
+		READ_DATA_COUNT_WIDTH => 4, -- ceil(log2(16))
+		READ_DATA_WIDTH => 2*G_DATA_WIDTH,
+		READ_MODE => "std",
+		RELATED_CLOCKS => 1,
+		USE_ADV_FEATURES => "0707",
+		WAKEUP_TIME => 0, -- disable sleep
+		WR_DATA_COUNT_WIDTH => 4, -- ceil(log2(16))
+		WRITE_DATA_WIDTH => 2*G_DATA_WIDTH
+	) port map (
+		-- Wr
+		wr_clk => clk, 
+		rst => rst,
+		wr_rst_busy => open,
+		wr_en => stereo_in_valid,
+		din => stereo_in_data,
+		wr_data_count => open,
+		-- Rd
+		rd_rst_busy => open,
+		rd_clk => i2s_bclk,
+		data_valid => fifo_data_valid_s,
+		rd_en => fifo_rd_en_s,
+		dout => fifo_dout_s,
+		rd_data_count => open,
+		-- other
+		sleep => '0',
+		injectsbiterr => '0',
+		injectdbiterr => '0',
+		sbiterr => open,
+		dbiterr => open,
+		full => fifo_full_s,
+		empty => empty,
+		overflow => overflow,
+		underflow => underflow,
+		prog_full => open,
+		prog_empty => open,
+		wr_ack => open,
+		almost_full => almost_full,
+		almost_empty => almost_empty
+	);
+
+	-------------------------------
+	-- L/R changes detector 
+	-------------------------------
+	process (i2s_bclk)
+	begin
+	if rising_edge (i2s_bclk) then
+		i2s_lr_z1 <= i2s_lr;
+	end if;
+	end process;
+
+	i2s_lr_changed <= i2s_lr_z1 xor i2s_lr;
+
+	---------------------------
+	-- I2S TX
+	---------------------------
+
+	tx_fifo_reader: process (i2s_bclk)
+	begin
+	if rising_edge (i2s_bclk) then
+
+		fifo_rd_en_s <= '0';
+
+		-- read on L/R falling edge
+		if i2s_lr_changed = '1' then
+			if i2s_lr = '0' then
+				fifo_rd_en_s <= '1';	
+			end if;
+		end if;
+
+	end if;
+	end process;
+
+	i2s_tx_sync: process (i2s_bclk)
+	begin
+	if rising_edge (i2s_bclk) then
+		if i2s_lr_changed = '1' then
+			if i2s_lr = '0' then
+				pointer_reg <= 2*G_DATA_WIDTH-1;
+			end if;
+		else
+			if pointer_reg > 0 then
+				pointer_reg <= pointer_reg-1;
+			end if;
+		end if;
+	end if;
+	end process;
 	
-	----------------------------
-	-- BCLK rising edge detector
-	----------------------------
-	process (clk)
-	begin
-	if rising_edge (clk) then
-		bclk_rising_s <= '0';
-		bclk_z1_s <= i2s_bclk;
-		if i2s_bclk = '1' and bclk_z1_s = '0' then
-			bclk_rising_s <= '1';
-		end if;
-	end if;
-	end process;
-
-	-------------------------------
-	-- shift L/R signal by one BCLK 
-	-------------------------------
-	process (clk)
-	begin
-	if rising_edge (clk) then
-		if bclk_rising_s = '1' then
-			lr_delayed_s <= i2s_lr;
-		end if;
-
-		lr_delayed_z1_s <= lr_delayed_s;
-	end if;
-	end process;
-
-	lr_delayed_changed_s <= lr_delayed_s xor lr_delayed_z1_s;
-
-	---------------------------
-	-- I2S RX
-	---------------------------
-	sync_i2s_rx: process (clk)
-	begin
-	if rising_edge (clk) then
-		valid_reg <= '0';
-
-		if lr_delayed_changed_s = '1' then
-			bit_count_reg <= G_DATA_WIDTH-1;
-			-- valid when L+R done
-			if lr_delayed_s = '0' then
-				valid_reg <= '1';
-			end if;
-		end if;
-
-		if bclk_rising_s = '1' then -- sampling on rising edge
-			-- stereo sampling
-			if lr_delayed_s = '1' then
-				data_r_reg(bit_count_reg) <= i2s_din;
-			else
-				data_l_reg(bit_count_reg) <= i2s_din;
-			end if;
-
-			-- pointer / MSBF
-			if bit_count_reg = 0 then
-				bit_count_reg <= G_DATA_WIDTH-1;
-			else
-				bit_count_reg <= bit_count_reg-1;
-			end if;
-		end if;
-	end if;
-	end process;
-
-	stereo_out_valid <= valid_reg;
-	stereo_out_data <= data_l_reg & data_r_reg;
-
-	--------------------------
-	-- I2S ASYNC TX buffer
-	--------------------------
-
-	i2s_dout <= '0';
+	i2s_dout <= fifo_dout_s(pointer_reg); 
 
 end rtl;
