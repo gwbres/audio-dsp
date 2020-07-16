@@ -1,0 +1,56 @@
+\documentclass{article}
+
+% packages
+\usepackage[utf8]{inputenc}
+\usepackage{pifont}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+% page format
+\topmargin=-2cm
+\textheight=23cm
+\textwidth=19cm
+\oddsidemargin=-1cm
+\setlength{\parindent}{0pt}
+
+\author{Guillaume W. Bres}
+\title{zed-audio-dsp}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Simulation}
+
+Install {\tt ghdl} to easily
+simulate modules that come with a testbench:
+
+\begin{verbatim}
+git clone https://github.com/ghdl/ghdl
+cd ghdl
+./configure
+make
+sudo make install
+\end{verbatim}
+
+Once this is done, you can safely simulate a module
+that comes with a testbench by using {\it make}
+in its {\tt sim} folder.
+For example:
+
+\begin{verbatim}
+cd $git/ip/adau1761/sim
+make
+\end{verbatim}
+
+\end{document}
