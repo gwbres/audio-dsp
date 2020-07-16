@@ -14,6 +14,8 @@ port (
 	i2s_din: in std_logic;
 	i2s_dout: out std_logic;
 	i2s_lr: in std_logic;
+	-- I/O
+	adau_mclk: out std_logic;
 	-- stereo/in
 	stereo_in_valid: in std_logic;
 	stereo_in_data: in std_logic_vector(24*2-1 downto 0)
@@ -32,41 +34,27 @@ architecture rtl of adau1761_top is
 	signal I2c_ack_s: std_logic_vector(3 downto 0);
 begin
 	
-	-----------------------
-	-- driver registers 
-	-----------------------
-
 	-----------------------------
 	-- 100M > 48M clk synthesizer
 	-----------------------------
 	adau_clk48_generator: adau_clk100_clk48_synth
 	port map (
-		clk48 =>
-		clk24 =>
+		clk100 => clk100,
+		clk48 => clk48_s,
+		clk24 => adau_mclk,
 	);
 	
 	-----------------------
 	-- I2C
 	-----------------------
-	adau_i2c_bus: entity ip_library.i2c_master
-	generic map (
-		G_USE_PULL_UP => '1',
-		G_REF_CLK_FREQUENCY => 100000000,
-		G_I2C_CLK_FREQUENCY => 100000
-	) port map (
+	adau_i2c_bus: entity work.i2c 
+	port map (
 		clk => clk100,
-		-- interface
-		i2c_request => i2c_request_s,
-		i2c_addr => i2c_addr_s,
-		i2c_length => "00",
-		i2c_wdata => i2c_wdata_s,
-		i2c_rdata => i2c_rdata_s,
-		i2c_busy => i2c_busy_s,
-		i2c_done => i2c_done_s,
-		i2c_ack => i2c_ack_s,
-		-- i2c
-		scl => i2c_scl,
-		sda => i2c_sda
+		i2c_sda_i => i2c_sda_i,
+		i2c_sda_o => i2c_sda_o,
+		i2c_sda_t => i2c_sda_t,
+		sw => "00",
+		active => open
 	);
 
 	-----------------------
