@@ -11,11 +11,11 @@ generic (
 );
 port (
 	clk: in std_logic;
-	-- magnitude stream
+	-- magnitude (in)
 	magnitude_valid: in std_logic;
 	magnitude_data: in std_logic_vector(G_DATA_WIDTH-1 downto 0);
 	magnitude_last: in std_logic;
-	--
+	-- histogram (out)
 	histogram_eol: out std_logic;
 	histogram_eof: out std_logic;
 	histogram_pxl: out std_logic_vector(8-1 downto 0)
@@ -26,6 +26,8 @@ architecture rtl of magnitude_histogram is
 
 	constant CLOG2_HISTOGRAM_X_PIXELS: natural := integer(ceil(log2(real(G_HISTOGRAM_X_PIXELS))));
 	constant CLOG2_HISTOGRAM_Y_PIXELS: natural := integer(ceil(log2(real(G_HISTOGRAM_Y_PIXELS))));
+
+	constant C_TOTAL_MEMORY_SIZE: natural := CLOG2_HISTOGRAM_X_PIXELS * (CLOG2_HISTOGRAM_Y_PIXELS+1);
 
 	constant BLACK_SQUARE_PXL: std_logic_vector(8-1 downto 0) := (others => '0');
 	constant WHITE_SQUARE_PXL: std_logic_vector(8-1 downto 0) := x"0000";
@@ -92,9 +94,52 @@ begin
 	bram_wdata(bram_wdata'length-2 downto 0) <= 
 		magnitude_data(magnitude_data'length-1 downto magnitude_data'length-CLOG2_HISTOGRAM_Y_PIXELS); 
 	
-	xilinx_simple_bram: xpm_simple_dpbram
+	xilinx_simple_bram: xpm_simple_sdpram
 	generic map (
+		MEMORY_SIZE => CLOG2_HISTOGRAM_X_PIXELS * (CLOG2_HISTOGRAM_Y_PIXELS+1), 
+		-- A
+		ADDR_WIDTH_A => CLOG2_HISTOGRAM_X_PIXELS,
+		WRITE_DATA_WIDTH_A => CLOG2_HISTOGRAM_Y_PIXELS+1,
+		BYTE_WRITE_WIDTH_A => (CLOG2_HISTOGRAM_Y_PIXELS+1)/4,
+		-- B
+		ADDR_WIDTH_B => CLOG2_HISTOGRAM_X_PIXELS,
+		READ_DATA_WIDTH_B => (CLOG2_HISTOGRAM_Y_PIXELS+1),
+		BYTE_WRITE_WIDTH_B => (CLOG2_HISTOGRAM_Y_PIXELS+1)/4,
+		-- other
+		AUTO_SLEEP_TIME => 0,
+		CLOCKING_MODE => "common_clock",
+		ECC_MODE => "no_ecc",
+		MEMORY_INIT_FILE => "none",
+		MEMORY_INIT_PARAM => "0",
+		MEMORY_PRIMITIVE => "auto",
+		MEMORY_OPTIMIZATION => "true",
+		MESSAGE_CONTROL => 0,
+		READ_LATENCY_B => 1,
+		READ_RESET_VALUE_B => "0",
+		USE_EMBEDDED_CONSTRAINT => 0,
+		USE_MEM_INIT => 0,
+		WAKEUP_TIME => "disable_sleep",
+		WRITE_MODE_B => "no_change"
 	) port map (
+		-- Wr
+		clka => clk,
+		wea => x"F",
+		ena => bram_wr_en,
+		addra => bram_waddr,
+		dina => bram_wdata,
+		-- Rd
+		clkb => clk,
+		rstb => rst,
+		regceb => '1',
+		enb => bram_rd_en,
+		doutb => bram_rdata,
+		-- Other
+		sleep => '0',
+		sbiterrb => open,
+		dbiterrb => open,
+		injectsbiterra => '0',
+		injectdbiterra => '0',
+
 	);
 
 	-- RD data
