@@ -2,6 +2,7 @@
 
 import sys
 import numpy as np
+from scipy import signal
 import matplotlib.pyplot as plt
 
 def main (argv):
@@ -29,24 +30,26 @@ def main (argv):
 			BW = int(value)
 	
 	# plot
-	fig, (ax0, ax1) = plt.subplots (1,2)
+	fig = plt.figure(1)
 	fig.set_size_inches(8,8)
+	
+	ax0 = fig.add_subplot(221)
+	ax0.set_title('CIC filter')
 	
 	# plot non compensated CIC response (input)
 	# along entire frequency axis
 	f = np.linspace(0, 1, 1024) -1/2
 	num = np.sin(2*np.pi*f*R/2)
 	denom = np.sin(2*np.pi*f/2)
-	Hcic  = 10 *np.log10(np.power(num/denom, N))
+	Hcic  = 20 *np.log10(np.power(num/denom, N))
 	Hcic -= max(Hcic)
 	ax0.plot(f, Hcic, '--', color='black', label='CIC filter')
-	ax0.set_title('CIC filter')
 	
 	xworst = 3/2/M/R
 	num = np.sin(R*M*np.pi*xworst)
 	denom = R * M * np.sin(np.pi*xworst)
 	Hworst = np.power(num/denom, N)
-	HworstdB = 10*np.log10(Hworst)
+	HworstdB = 20*np.log10(Hworst)
 	ax0.plot(xworst, HworstdB, 'x', markeredgewidth=2.0, markersize=10, color='black')
 	ax0.text(0, HworstdB+3, 'Worst Alias Rejected by {:.3f} dB'.format(HworstdB))
 	
@@ -60,27 +63,30 @@ def main (argv):
 	
 	# designs compensation filter
 	# within new nyquist zone only
+	
+	ax1 = fig.add_subplot(222)
+	ax1.set_title('Compensated CIC filter with BW {:d}%'.format(bw))
 
 	# pass band
 	fpb = np.linspace(0, bw*1/R/100, int(bw*1024/100))
 	# use inverse response
 	num = np.sin(2*np.pi*fpb/2)
 	denom = np.sin(2*np.pi*fpb*R/2)
-	Hpb = 10 *np.log10(np.power(num/denom, N))
+	Hpb = 20 *np.log10(np.power(num/denom, N))
 	Hpb -= Hpb[1]
-	ax1.plot(fpb, Hpb, '--', label='Compensator Pass-Band')
 	
 	# stop band
 	fsb = np.linspace(bw*1/R/100, 1/R, int((100-bw)*1024/100))
 	# regular response 
 	num = np.sin(2*np.pi*fsb*R/2)
 	denom = np.sin(2*np.pi*fsb/2)
-	Hsb = 10 *np.log10(np.power(num/denom, N))
+	Hsb = 20 *np.log10(np.power(num/denom, N))
 	Hsb -= max(Hsb)
 	Hsb += Hpb[-1]
-	ax1.plot(fsb, Hsb, '--', label='Compensator Stop-Band')
 	
-	# compensator / total new nyquist band
+	# Build symmetric frequency response
+	# for total FIR filter (ranging from -1/R:1/R, i.e
+	# total new Nyquist band
 	Hcomp = Hsb[::-1]
 	Hcomp = np.concatenate((Hcomp, Hpb[::-1]))
 	Hcomp = np.concatenate((Hcomp, Hpb))
@@ -90,22 +96,15 @@ def main (argv):
 	f = np.linspace(-1/R, 1/R, len(Hcomp))
 	num = np.sin(2*np.pi*f*R/2)
 	denom = np.sin(2*np.pi*f/2)
-	Hcic = 10*np.log10(np.power(num/denom, N))
+	Hcic = 20*np.log10(np.power(num/denom, N))
 	Hcic -= max(Hcic)
-
+	
 	Htot = Hcic + Hcomp
 	
-	ax1.plot(f, Htot, label='Total CIC+FIR response')
+	ax1.plot(f, Hcomp, '--', label='CIC compensation')
+	ax1.plot(f, Htot, label='Total response')
 	ax1.plot(f, Hcic, '--', color='black', label='CIC filter')
 	
-	# plot compensated CIC
-	# within new nyquist band
-	#Htot = Hcic + Hcomp
-	#Htot = np.concatenate(Htot[::-1], Htot)
-	#ax1.plot(f, Htot, label='Total CIC+FIR response')
-	
-	ax1.set_title('Compensated CIC filter with BW {:d}%'.format(bw))
-
 	ax1.set_xlabel('Normalized frequency')
 	ax1.set_ylabel('Magnitude [dB]')
 	ax1.legend(loc='best')
@@ -113,7 +112,21 @@ def main (argv):
 	# focus
 	ax1.set_ylim(-50, 10)
 	ax1.set_xlim(-3/2/M/R, 3/2/M/R+0.1)
+
+	# Impulse Response
+	# from FIR system
+	ax3 = fig.add_subplot(212)
+	f = f+1/R # fir.design requires [0:fnyquist]
+	f /= f[-1] # fir.design requires [0:1]
+	print(f)
+	a = signal.firls(31, f, 10**(Hcomp/20))
+	ax3.plot(a,'-x')
+
+	ax3.grid(True)
+	ax3.set_ylabel('Impulse response')
+	ax3.set_xlabel('tau')
 	
+	fig.tight_layout()
 	plt.show()
 
 if __name__ == "__main__":
