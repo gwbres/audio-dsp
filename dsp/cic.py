@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 def main (argv):
 	
+	# CIC filter parameters
 	R = 1
 	M = 1
 	N = 2
@@ -16,9 +17,6 @@ def main (argv):
 
 		if key == 'R':
 			R = int(value)
-
-		elif key == 'M':
-			M = int(value)
 
 		elif key == 'N':
 			N = int(value)
