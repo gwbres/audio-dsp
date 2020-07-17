@@ -10,4 +10,4 @@ documentation.pdf: documentation.tex
 
 .PHONY: clean
 clean:
-	$(RM) *.out *.aux *.toc *.log *.pdf
+	$(RM) *.out *.aux *.toc *.log documentation.pdf
