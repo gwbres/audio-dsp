@@ -4,7 +4,6 @@ use     ieee.std_logic_1164.all;
 
 entity cic_comb_stage is
 generic (
-	G_M_VALUE: natural := 1;
 	G_DATA_WIDTH: natural := 16
 );
 port (

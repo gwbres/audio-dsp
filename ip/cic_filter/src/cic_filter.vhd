@@ -7,7 +7,6 @@ generic (
 	G_IS_DECIMATOR: std_logic := '1'; -- '0': interpolation filter
 	G_CIC_R: positive := 8; -- decimation ratio
 	G_CIC_N: positive := 8; -- nb stages
-	G_CIC_M: positive := 1; -- time delay =1 or 2
 	G_DATA_WIDTH: natural := 16
 );
 port (
@@ -31,7 +30,6 @@ g_cic_decimation_filter_gen: generate if (G_IS_DECIMATOR) generate
 	generic map (
 		G_CIC_R => G_CIC_R,
 		G_CIC_N => G_CIC_N,
-		G_CIC_M => G_CIC_M,
 		G_DATA_WIDTH => G_DATA_WIDTH
 	) port map (
 		clk => clk,
@@ -47,7 +45,6 @@ else
 	generic map (
 		G_CIC_R => G_CIC_R,
 		G_CIC_N => G_CIC_N,
-		G_CIC_M => G_CIC_M,
 		G_DATA_WIDTH => G_DATA_WIDTH
 	) port map (
 		clk => clk,
