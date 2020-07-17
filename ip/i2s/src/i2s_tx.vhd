@@ -27,9 +27,9 @@ port (
 	----------------------
    -- I2S
 	----------------------
-   i2s_bclk: in std_logic;
-   i2s_dout: out std_logic;
-   i2s_lr: in std_logic
+   bclk: in std_logic;
+   dout: out std_logic;
+   lr: in std_logic
 );
 end i2s_tx;
 
@@ -40,8 +40,8 @@ architecture rtl of i2s_tx is
 	signal bclk_z1_s: std_logic := '0';
 	signal bclk_rising_s: std_logic;
 
-	signal i2s_lr_changed: std_logic := '0';
-	signal i2s_lr_z1: std_logic;
+	signal lr_changed: std_logic := '0';
+	signal lr_z1: std_logic;
 
 	signal fifo_data_valid_s: std_logic;
 	signal fifo_rd_en_s: std_logic;
@@ -86,7 +86,7 @@ begin
 		wr_data_count => open,
 		-- Rd
 		rd_rst_busy => open,
-		rd_clk => i2s_bclk,
+		rd_clk => bclk,
 		data_valid => fifo_data_valid_s,
 		rd_en => fifo_rd_en_s,
 		dout => fifo_dout_s,
@@ -111,28 +111,28 @@ begin
 	-------------------------------
 	-- L/R changes detector 
 	-------------------------------
-	process (i2s_bclk)
+	process (bclk)
 	begin
-	if rising_edge (i2s_bclk) then
-		i2s_lr_z1 <= i2s_lr;
+	if rising_edge (bclk) then
+		lr_z1 <= lr;
 	end if;
 	end process;
 
-	i2s_lr_changed <= i2s_lr_z1 xor i2s_lr;
+	lr_changed <= lr_z1 xor lr;
 
 	---------------------------
 	-- I2S TX
 	---------------------------
 
-	tx_fifo_reader: process (i2s_bclk)
+	tx_fifo_reader: process (bclk)
 	begin
-	if rising_edge (i2s_bclk) then
+	if rising_edge (bclk) then
 
 		fifo_rd_en_s <= '0';
 
 		-- read on L/R falling edge
-		if i2s_lr_changed = '1' then
-			if i2s_lr = '0' then
+		if lr_changed = '1' then
+			if lr = '0' then
 				fifo_rd_en_s <= '1';	
 			end if;
 		end if;
@@ -140,11 +140,11 @@ begin
 	end if;
 	end process;
 
-	i2s_tx_sync: process (i2s_bclk)
+	i2s_tx_sync: process (bclk)
 	begin
-	if rising_edge (i2s_bclk) then
-		if i2s_lr_changed = '1' then
-			if i2s_lr = '0' then
+	if rising_edge (bclk) then
+		if lr_changed = '1' then
+			if lr = '0' then
 				pointer_reg <= 2*G_DATA_WIDTH-1;
 			end if;
 		else
@@ -155,6 +155,6 @@ begin
 	end if;
 	end process;
 	
-	i2s_dout <= fifo_dout_s(pointer_reg); 
+	dout <= fifo_dout_s(pointer_reg); 
 
 end rtl;

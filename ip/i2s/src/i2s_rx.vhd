@@ -15,9 +15,9 @@ port (
 	----------------------
    -- I2S
 	----------------------
-   i2s_bclk: in std_logic;
-   i2s_din: in std_logic;
-   i2s_lr: in std_logic
+   bclk: in std_logic;
+   din: in std_logic;
+   lr: in std_logic
 );
 end i2s_rx;
 
@@ -42,8 +42,8 @@ begin
 	begin
 	if rising_edge (clk) then
 		bclk_rising_s <= '0';
-		bclk_z1_s <= i2s_bclk;
-		if i2s_bclk = '1' and bclk_z1_s = '0' then
+		bclk_z1_s <= bclk;
+		if bclk = '1' and bclk_z1_s = '0' then
 			bclk_rising_s <= '1';
 		end if;
 	end if;
@@ -56,7 +56,7 @@ begin
 	begin
 	if rising_edge (clk) then
 		if bclk_rising_s = '1' then
-			lr_delayed_s <= i2s_lr;
+			lr_delayed_s <= lr;
 		end if;
 
 		lr_delayed_z1_s <= lr_delayed_s;
@@ -84,9 +84,9 @@ begin
 		if bclk_rising_s = '1' then -- sampling on rising edge
 			-- stereo sampling
 			if lr_delayed_s = '1' then
-				data_r_reg(bit_count_reg) <= i2s_din;
+				data_r_reg(bit_count_reg) <= din;
 			else
-				data_l_reg(bit_count_reg) <= i2s_din;
+				data_l_reg(bit_count_reg) <= din;
 			end if;
 
 			-- pointer / MSBF

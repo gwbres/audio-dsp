@@ -18,23 +18,23 @@ port (
 	tx_full: out std_logic;
 	tx_overflow: out std_logic;
 	----------------------
-   -- STEREO DATA/in
+   -- Stereo Stream (in)
 	----------------------
 	stereo_in_ready: out std_logic;
 	stereo_in_valid: in std_logic;
    stereo_in_data: in std_logic_vector(2*G_DATA_WIDTH-1 downto 0);
 	----------------------
-   -- STEREO DATA/out
+   -- Stereo Stream (out)
 	----------------------
 	stereo_out_valid: out std_logic;
    stereo_out_data: out std_logic_vector(2*G_DATA_WIDTH-1 downto 0);
 	----------------------
    -- I2S
 	----------------------
-   i2s_bclk: in std_logic;
-   i2s_din: in std_logic;
-   i2s_dout: out std_logic;
-   i2s_lr: in std_logic
+   bclk: in std_logic;
+   din: in std_logic;
+   dout: out std_logic;
+   lr: in std_logic
 );
 end i2s;
 
@@ -54,9 +54,9 @@ begin
 		stereo_valid => stereo_out_valid,
 		stereo_data => stereo_out_data,
 		-- i2s
-		i2s_bclk => i2s_bclk,
-		i2s_din => i2s_din,
-		i2s_lr => i2s_lr
+		bclk => bclk,
+		din => din,
+		lr => lr
 	);
 
 	--------------------------
@@ -80,9 +80,9 @@ begin
 		stereo_valid => stereo_in_valid,
 		stereo_data => stereo_in_data,
 		-- i2s
-		i2s_bclk => i2s_bclk,
-		i2s_dout => i2s_dout,
-		i2s_lr => i2s_lr
+		bclk => bclk,
+		dout => dout,
+		lr => lr
 	);
 
 end rtl;
