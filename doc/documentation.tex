@@ -31,7 +31,7 @@
 
 This project is an application of basic
 signal processing on audio signal,
-using Zynq/Zedboard platforms.
+using zc702/zc706 development platforms.
 
 \tableofcontents
 
@@ -46,33 +46,42 @@ using Zynq/Zedboard platforms.
 
 All processing is real time and synchronous to the input
 stream. The initial sample rate is 48 MHz, making the
-input data rate 
-which leads to a 1.152 Gb/s input data rate, this is much more than needed. \\
+input data rate 1.152 Gb/s. This is way more more than needed.
+In this setup we would need gigantic FFT to reach a decent
+resolution. We would also have to implement enormous filters
+to obtain a meaningful output. \\
 
-We reduce the internal sample rate to 24 kHz (a little more than needed),
-reducing the bit rate to 576 kB/s.
-Data rate reduction is done using a CIC decimation filter. \\
+We use a CIC decimation filter with R = 128
+to reduce the sample rate to 24 kHz (a little more than needed).
+This reduces the bit rate to 576 kB/s. \\
 
-The modulation filter as well as the
-EQ filter are controlled from the User Interface. \\
+One modulation can be applied on the signal,
+as well as one EQ preset made of 16 subbands and
+one Reverb/room profile can be emulated.
+These are all implemented 
+\& controlled in real time from the user interface.
+For each step refer to its own documentation down below. \\
 
-The FFT processes either the
-direct RX input or the output signal.
-This allows to visualize the effect
-of the modulation \& the EQ filters.
-Switching is done in real time on user specs. \\
+The modulation \& EQ will be applied using an FIR type
+of implemntation. The Reverb profile will be implemented
+by a 10 tap IIR type of filter. \\
 
-The resulting power spectrum is converted to histogram
-\& displayed on the onboard OLED display.
-The display is 128x32 pixel wide, which in our case
-gives a spectral resolution of 187.5 Hz
-on the display, which is more than decent. \\
+A power spectral analysis is performed in real time,
+either on the direct input line
+or the final output line. Selection is done in
+real time using the User Interface. Refer
+to following section for further details.
+The CIC decimator gives us a 187 Hz resolution in the spectral
+analysis. The result is displayed in real time in the
+form of a histogram, on the 'OLed' display. \\
 
-The internal data stream obviously needs a final
-interpolation, this is done by a CIC interpolation
-filter, feeding a 1.152 Gb/s stream to the TX side.
-The CIC interpolation filter is strictly symmetrical
-to the CIC decimation filter.
+By selecting either the direct input line
+or the output line to feed the FFT, we
+can choose to see the effect of the current filters
+on the signal in spectral domain. \\
+
+A final interpolation is obviously
+needed to come back to the initial 1.152 Gb/s rate.
 
 \newpage
 \subsection{CIC filters}
