@@ -226,6 +226,19 @@ The Modulation Filter \& EQ filter would require so
 many bands to be computated that it would also be impossible
 to implement them in the system.
 
+\begin{center}
+	\begin{minipage}{0.49\linewidth}
+		\includegraphics[width=0.99\linewidth]{fir-des-3.pdf}
+		Direct cut off is impossible to reach in the implemented
+		form. This is a 16 tap FIR filter.
+	\end{minipage}
+	\begin{minipage}{0.49\linewidth}
+		\includegraphics[width=0.99\linewidth]{fir-des-4.pdf}
+		Increasing to 128 taps dramatically reduces
+		the distortion within the band.
+	\end{minipage}
+\end{center}
+
 \subsubsection{CIC interpolation filter}
 
 Using previously designed compensated CIC decimator,
@@ -276,8 +289,8 @@ the power spectrum along a frequency axis. \\
 %	\includegraphics[width=0.75\linewidth]{fft_histogram.pdf} \\
 %\end{center}
 
+\newpage
 \section{Simulation}
-
 \subsection{GHDL}
 
 Most IPs are simple unitary functions
