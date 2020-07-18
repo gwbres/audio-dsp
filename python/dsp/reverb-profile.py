@@ -19,30 +19,32 @@ def _parseIntegerValue (self, content):
 
 def main (argv):
 	if len(argv) == 0:
-		wav = Wav('../../data/reverb-profiles/Nice Drum Room.wav')
-	else:
-		wav_file = argv[0]
+		profiles = listfile ('../../data/reverb-profiles/')
+		string = 'Select one profile among:\n'
+		for i in range (0, len(profiles)):
+			string += '{:d}: {:s}\n'.format(i, profiles[i])
 
-	#wav = Wav('../../data/reverb-profiles/Deep Space.wav')
-	#wav = Wav('../../data/reverb-profiles/BIG HALL E001 M2S.wav')
-	#wav = Wav('../../data/reverb-profiles/BIG HALL E003 M2S.wav')
-	#wav = Wav('../../data/reverb-profiles/WIDE HALL-1.wav')
-	#wav = Wav('../../data/reverb-profiles/CORRIDOR FLUTTER ECHO E001 M2S.wav')
-	#wav = Wav('../../data/reverb-profiles/Large Wide Echo Hall.wav')
+		id = int(input(string))
+		profile =  '../../data/reverb-profiles/' + profiles[id]
+	else:
+		profile = argv[0]
 	
+	wav = Wav(profile)
 	print(wav) # .wav infos
+
 	data = wav.getData()
 	
 	# convert impulse response
 	# to .coe file
-	
 
 	fig = plt.figure(1)
 
 	# time domain => impulse response
 	ax = fig.add_subplot(211)
+	ax.set_title("Impulse profile: '{:s}'".format(profile))
+
 	for i in range (0, len(data)):
-		ax.plot(data[i], label='Audio channel {:d}'.format(i))
+		ax.plot(data[i], 'x-', label='Audio channel {:d}'.format(i))
 	
 	ax.grid(True)
 	ax.legend(loc='best')
