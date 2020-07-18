@@ -2,4 +2,8 @@
 *.cf
 *.swp
 
+*.log
+*.jou
+*.str
+
 buildroot
