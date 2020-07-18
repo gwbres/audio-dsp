@@ -1,6 +1,8 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
+library ip_library;
+
 entity audio_dsp_top is
 port (
 	clk100: in std_logic;
@@ -24,23 +26,39 @@ architecture rtl of audio_dsp_top is
 	-- ######################
 	-- Audio Codec (Adau1761)
 	-- ######################
-	signal adau_i2c_sda_i_s: std_logic;
-	signal adau_i2c_sda_o_s: std_logic;
-	signal adau_i2c_sda_t_s: std_logic;
+	signal clk48_s: std_logic;
+	signal clk48_rst_s: std_logic;
+
+	signal audio_rx_valid_s: std_logic;
+	signal audio_rx_data_s: std_logic_vector(23 downto 0);
 
 begin
 
 	-- ######################
 	-- Audio Codec (Adau1761)
 	-- ######################
-
 	adau1761_drv_inst: entity ip_library.adau1761_top
 	port map (
 		clk100 => clk100,
+		clk48 => clk48_s,
+		clk48_rst => clk48_rst_s,
+		mclk => adau_mclk,
 		-- I2C
 		scl => adau_scl,
 		sda => adau_sda,
+		addr0 => adau_addr0,
+		addr1 => adau_addr1,
 		-- I2S
+		bclk => adau_bclk,
+		din => adau_din,
+		dout => adau_dout,
+		lr => adau_lr,
+		-- stereo (in)
+		stereo_in_valid => audio_rx_valid_s,
+		stereo_in_data => audio_rx_data_s,
+		-- stereo (out)
+		stereo_out_valid => audio_rx_valid_s,
+		stereo_out_data => audio_rx_data_s
 	);
 
 end rtl;
