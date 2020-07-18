@@ -1,2 +1,3 @@
 #! /bin/sh
-source $XILINX_PATH/Vivado/2019.2/bin/setupEnv.sh
+VIVADO_VER=2020.1
+source $XILINX_PATH/Vivado/$VIVADO_VER/settings64.sh
