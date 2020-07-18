@@ -4,7 +4,7 @@ import numpy as np
 class Wav (object):
 
 	def __init__ (self, fp):
-		
+
 		content = self._read_raw(fp)
 
 		self.fileName = fp
@@ -13,7 +13,7 @@ class Wav (object):
 		if fileTypeBlocID != b'RIFF':
 			raise RuntimeError('RIFF TypeBloc ID error!')
 
-		self.fileSize = self._parseIntegerValue(content[4:8])
+		self.fileSize = self._parseUnsignedIntegerValue(content[4:8])
 
 		fileFormatID = content[8:12]
 		if fileFormatID != b'WAVE':
@@ -23,7 +23,7 @@ class Wav (object):
 		if formatBlocID != b'fmt ':
 			raise RuntimeError('Corrupted .wav format description')
 
-		self.blocSize = self._parseIntegerValue(content[16:20])
+		self.blocSize = self._parseUnsignedIntegerValue(content[16:20])
 		
 		audioFormat = int(content[20])
 		if audioFormat == 1:
@@ -31,17 +31,17 @@ class Wav (object):
 		else:
 			self.audioFormat = 'Unknown'
 		
-		self.nbChannels = self._parseIntegerValue(content[22:24])
-		self.sampleRate = self._parseIntegerValue(content[24:28])
+		self.nbChannels = self._parseUnsignedIntegerValue(content[22:24])
+		self.sampleRate = self._parseUnsignedIntegerValue(content[24:28])
 		bytesPerSec = content[28:32]
 		bytesPerBloc = content[32:34]
-		self.bitsPerSample = self._parseIntegerValue(content[34:36])
+		self.bitsPerSample = self._parseUnsignedIntegerValue(content[34:36])
 
 		dataBlocId = content[36:40]
 		if dataBlocId != b'data':
 			raise RuntimeError('Corrupted .wav data description')
 
-		self.dataSize = self._parseIntegerValue(content[40:44])
+		self.dataSize = self._parseUnsignedIntegerValue(content[40:44])
 
 		# parsing data
 		nbSymbols = int(self.dataSize /8 /self.bitsPerSample /self.nbChannels)
@@ -52,7 +52,7 @@ class Wav (object):
 			for j in range (0, self.nbChannels): 
 				c = content[offset:offset+bytesPerSymbols]
 				offset += bytesPerSymbols
-				self.data[j][i] = self._parseIntegerValue(c)
+				self.data[j][i] = self._parseSignedIntegerValue(c, bits=self.bitsPerSample)
     
 		# remove DC
 		self.data -= np.mean(self.data)
@@ -95,11 +95,19 @@ class Wav (object):
 		string += 'Data size: {:d} bytes\n'.format(self.dataSize)
 		return string
 
-	def _parseIntegerValue (self, content):
+	def _parseUnsignedIntegerValue (self, content):
 		integer = 0
 		for i in range (0, len(content)):
 			integer += int(content[i]) << (8*i)
 		return integer
+
+	def _parseSignedIntegerValue (self, content, bits=8):
+		max_positive = pow(2,bits-1)
+		unsigned = self._parseUnsignedIntegerValue (content)
+		if unsigned > max_positive: # is negative
+			return -pow(2,bits) + unsigned
+		else:
+			return unsigned 
 		
 """
 [Bloc des données]
