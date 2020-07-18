@@ -36,6 +36,13 @@ def main (argv):
 	
 	# convert impulse response
 	# to .coe file
+	fp = profile.split('/')[-1]
+	fp = fp.split('.')[0]
+	fp = fp.replace(' ','-')
+	for i in range (0, len(data)):
+		channel = fp + '-channel{:d}.coe'.format(i)
+		xlnx_coe_writer(data[i], channel, bits=16, signed=True)
+		print('Impulse response written into {:s}'.format(channel))
 
 	fig = plt.figure(1)
 
