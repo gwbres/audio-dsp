@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 class Wav (object):
@@ -5,6 +6,8 @@ class Wav (object):
 	def __init__ (self, fp):
 		
 		content = self._read_raw(fp)
+
+		self.fileName = fp
 
 		fileTypeBlocID = content[0:4]
 		if fileTypeBlocID != b'RIFF':
@@ -46,15 +49,17 @@ class Wav (object):
 		offset = 40
 		bytesPerSymbols = self.bitsPerSample //8 
 		for i in range (0, self.data.shape[1]):
-			for j in range (0, self.nbChannels):
+			for j in range (0, self.nbChannels): 
 				c = content[offset:offset+bytesPerSymbols]
-				print(offset, offset+bytesPerSymbols)
 				offset += bytesPerSymbols
 				self.data[j][i] = self._parseIntegerValue(c)
+    
+		# remove DC
+		self.data -= np.mean(self.data)
 
 		# normalize data to [-1:1] signed data
-		norm = pow(2,self.bitsPerSample) -1
-		self.data /= norm 
+		norm = pow(2,self.bitsPerSample-1)
+		self.data /= norm
 
 	def numberOfSymbols (self):
 		return self.data.shape[1]
@@ -80,7 +85,8 @@ class Wav (object):
 			return fd.read()
 
 	def __str__ (self):
-		string  = 'Audio Format: {:s}\n'.format(self.audioFormat)
+		string = 'File: {:s}\n'.format(self.fileName)
+		string += 'Audio Format: {:s}\n'.format(self.audioFormat)
 		string += 'Sample Rate: {:d} Hz\n'.format(self.sampleRate)
 		string += 'Nb Channels: {:d}\n'.format(self.nbChannels)
 		string += 'Bits per sample: {:d}\n'.format(self.bitsPerSample)
