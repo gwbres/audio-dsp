@@ -5,6 +5,52 @@ import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
 
+def sign_extend (number, bits):
+	"""
+	Sign extends given number
+	for specified amount of bits
+	"""
+	if number < 0:
+		binary = bin(number)[3:] # '-0b'
+		if len(binary) < bits: 
+			n_stuff = bits - len(binary)
+			for i in range (0, n_stuff):
+				binary = '1' + binary
+			return int(binary,2)
+		else:
+			return number
+	else:
+		return number
+
+def convert_to_xilinx_coe (data, fp, bits=16, signed=True):
+	"""
+	Converts given 1D data array (float)
+	to 1D integer & normalized data
+	into xilinx compliant .coe file
+	"""
+	if signed:
+		norm = pow(2,bits-1)
+	else:
+		norm = pow(2,bits) 
+
+	format_string = '{:0' + str(int(np.log2(bits))) + 'x}'
+
+	with open(fp, "w") as fd:
+		fd.write('memory_initialization_radix=16;\n') # hexa
+		fd.write('memory_initialization_vector=\n\t') # hexa
+		for i in range (0, len(data)-1):
+			d = int(data[i] * norm)
+			d = sign_extend(d, bits)
+			fd.write(format_string.format(d)+',')
+
+			if (i%8) == 7:
+				fd.write('\n\t')
+
+		d = int(data[-1] * norm)
+		d = sign_extend(d, bits)
+		fd.write(format_string.format(d))
+		fd.write(';')
+
 def main (argv):
 	
 	# CIC filter parameters
@@ -123,8 +169,12 @@ def main (argv):
 
 	f /= f[-1] # fir.design requires [0:1]
 	hfir[0] = hfir[1] # DC=0 causes problem
-	a = signal.firwin2(128, f, hfir) 
+	a = signal.firwin2(ncoef, f, hfir) 
 	a /= max(a)
+
+	fp = 'fir{:d}-cic{:d}-m1-n{:d}.coe'.format(ncoef, R, N)
+	convert_to_xilinx_coe (a, fp, bits=16, signed=True)
+	print('Xilinx coefficient file {:s} has been created'.format(fp))
 	
 	delay = np.linspace(-len(a)//2, len(a)//2, len(a))
 	ax3.plot(delay, a, '-x', label='h(z) with {:d} coefs'.format(ncoef)) # plot impulse response
