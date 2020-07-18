@@ -28,7 +28,7 @@ begin
 	
 	clk <= not(clk) after 5.0 ns;
 
-	bclk <= not(bclk) after 100.0 ns;
+	bclk <= not(bclk) after 20.83 ns;
 
 	fake_stereo_lr: process (bclk)
 	begin
