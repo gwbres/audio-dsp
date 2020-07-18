@@ -1,6 +1,9 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
+library work;
+library ip_library;
+
 entity adau1761_top is
 port (
 	clk100: in std_logic;
@@ -19,7 +22,7 @@ port (
 	lr: in std_logic;
 	-- stereo/in
 	stereo_in_valid: in std_logic;
-	stereo_in_data: in std_logic_vector(24*2-1 downto 0)
+	stereo_in_data: in std_logic_vector(24*2-1 downto 0);
 	-- stereo/out
 	stereo_out_valid: out std_logic;
 	stereo_out_data: out std_logic_vector(24*2-1 downto 0)
@@ -40,7 +43,7 @@ architecture rtl of adau1761_top is
 		clk48: out std_logic;
 		clk24: out std_logic
 	);
-	end clk100_clk48_synth;
+	end component clk100_clk48_synth;
 
 	signal i2c_sda_i_s: std_logic;
 	signal i2c_sda_o_s: std_logic;
@@ -54,16 +57,16 @@ begin
 	------------------------------
 	-- Adau/System clk synthesizer
 	------------------------------
-	adau_clk48_generator: adau_clk100_clk48_synth
+	audio_clocks_synth_inst: clk100_clk48_synth
 	port map (
 		clk100 => clk100,
 		clk48 => clk48_s,
-		clk24 => mclk,
+		clk24 => mclk
 	);
 
 	clk48 <= clk48_s;
 	clk48_rst_s <= clk48_reset_reg(clk48_reset_reg'high);
-	clk48_rst <= clk48_rst;
+	clk48_rst <= clk48_rst_s;
 
 	-- CLK48 reset bit generator
 	process (clk48_s)
