@@ -108,18 +108,3 @@ class Wav (object):
 			return -pow(2,bits) + unsigned
 		else:
 			return unsigned 
-		
-"""
-[Bloc des données]
-DATAS[] : [Octets du Sample 1 du Canal 1] [Octets du Sample 1 du Canal 2] [Octets du Sample 2 du Canal 1] [Octets du Sample 2 du Canal 2]
-
-* Les Canaux :
-	1 pour mono,
-	2 pour stéréo
-	3 pour gauche, droit et centre
-	4 pour face gauche, face droit, arrière gauche, arrière droit
-	5 pour gauche, centre, droit, surround (ambiant)
-	6 pour centre gauche, gauche, centre, centre droit, droit, surround (ambiant)
-NOTES IMPORTANTES :  Les octets des mots sont stockés sous la forme Petit-boutiste (c.-à-d., en "little endian")
-[87654321][16..9][24..17] [8..1][16..9][24..17] [...
-"""
