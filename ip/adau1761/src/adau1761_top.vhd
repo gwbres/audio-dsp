@@ -1,6 +1,9 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
+library unisim;
+use     unisim.vcomponents.all;
+
 library work;
 library ip_library;
 
@@ -21,6 +24,7 @@ port (
 	dout: out std_logic;
 	lr: in std_logic;
 	-- stereo/in
+	stereo_in_ready: out std_logic;
 	stereo_in_valid: in std_logic;
 	stereo_in_data: in std_logic_vector(24*2-1 downto 0);
 	-- stereo/out
@@ -39,19 +43,25 @@ architecture rtl of adau1761_top is
 	-------------------------------------
 	component clk100_clk48_synth is
 	port (
-		clk100: in std_logic;
+		clk_in1: in std_logic;
+		reset: in std_logic;
+		locked: out std_logic;
 		clk48: out std_logic;
 		clk24: out std_logic
 	);
 	end component clk100_clk48_synth;
 
+	signal clk48_s: std_logic;
+	signal clk48_rst_s: std_logic;
+	signal clk48_reset_reg: std_logic_vector(15 downto 0) := (others => '1');
+	
+    ------------------------------
+    -- IIC tri-state buffer
+    ------------------------------
 	signal i2c_sda_i_s: std_logic;
 	signal i2c_sda_o_s: std_logic;
 	signal i2c_sda_t_s: std_logic;
 
-	signal clk48_s: std_logic;
-	signal clk48_rst_s: std_logic;
-	signal clk48_reset_reg: std_logic_vector(15 downto 0) := (others => '1');
 begin
 	
 	------------------------------
@@ -59,7 +69,9 @@ begin
 	------------------------------
 	audio_clocks_synth_inst: clk100_clk48_synth
 	port map (
-		clk100 => clk100,
+		clk_in1 => clk100,
+		reset => '0',
+		locked => open,
 		clk48 => clk48_s,
 		clk24 => mclk
 	);
@@ -83,7 +95,7 @@ begin
 	-----------------------
 	adau_iic_bus: entity work.i2c 
 	port map (
-		clk => clk100,
+		clk => clk48_s,
 		i2c_sda_i => i2c_sda_i_s,
 		i2c_sda_o => i2c_sda_o_s,
 		i2c_sda_t => i2c_sda_t_s,
@@ -95,13 +107,13 @@ begin
 	adau_iic_iobuf_inst: IOBUF
 	port map (
 		T => i2c_sda_t_s,
-		I => i2c_sda_i_s,
-		O => i2c_sda_o_s,
+		O => i2c_sda_i_s,
+		I => i2c_sda_o_s,
 		IO => sda
 	);
 
-	addr0 <= '0';
-	addr1 <= '0';
+	addr0 <= '1';
+	addr1 <= '1';
 
 	-----------------------
 	-- I2S

@@ -13,6 +13,8 @@ port (
 	-- I2C
 	adau_scl: out std_logic;
 	adau_sda: inout std_logic;
+	adau_addr0: out std_logic;
+	adau_addr1: out std_logic;
 	-- I2S
 	adau_bclk: in std_logic;
 	adau_lr: in std_logic;
@@ -30,7 +32,7 @@ architecture rtl of audio_dsp_top is
 	signal clk48_rst_s: std_logic;
 
 	signal audio_rx_valid_s: std_logic;
-	signal audio_rx_data_s: std_logic_vector(23 downto 0);
+	signal audio_rx_data_s: std_logic_vector(24*2-1 downto 0);
 
 begin
 
@@ -42,7 +44,7 @@ begin
 		clk100 => clk100,
 		clk48 => clk48_s,
 		clk48_rst => clk48_rst_s,
-		mclk => adau_mclk,
+		mclk => open, --adau_mclk,
 		-- I2C
 		scl => adau_scl,
 		sda => adau_sda,
@@ -54,6 +56,7 @@ begin
 		dout => adau_dout,
 		lr => adau_lr,
 		-- stereo (in)
+		stereo_in_ready => open,
 		stereo_in_valid => audio_rx_valid_s,
 		stereo_in_data => audio_rx_data_s,
 		-- stereo (out)
