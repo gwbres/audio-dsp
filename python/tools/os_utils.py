@@ -1,6 +1,23 @@
 import os
 import time
+import subprocess
 import datetime
+
+def subprocess_run (*args, capture_output=False):
+	"""
+	Launches a child task, from given attributes
+	"""
+	if (capture_output):
+		return subprocess.run( 
+			args, 
+			capture_output=True
+		)
+
+	else:
+		return subprocess.run( 
+			args, 
+			stdout=subprocess.DEVNULL,
+		)
 
 def file_name (fp):
 	"""
