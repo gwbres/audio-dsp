@@ -1,4 +1,5 @@
 *.vcd
 *.cf
+*.swp
 
 buildroot
