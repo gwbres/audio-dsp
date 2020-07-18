@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="i2s_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="i2s_tb" />
+            <top_module name="vcomponents" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="5090fs"></ZoomStartTime>
+      <ZoomEndTime time="14105091fs"></ZoomEndTime>
+      <Cursor1Time time="4645090fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="276"></NameColumnWidth>
+      <ValueColumnWidth column_width="108"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="33" />
+   <wvobject fp_name="divider20" type="divider">
+      <obj_property name="label">I2S</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/bclk">
+      <obj_property name="ElementShortName">bclk</obj_property>
+      <obj_property name="ObjectShortName">bclk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/din">
+      <obj_property name="ElementShortName">din</obj_property>
+      <obj_property name="ObjectShortName">din</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dout">
+      <obj_property name="ElementShortName">dout</obj_property>
+      <obj_property name="ObjectShortName">dout</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/lr">
+      <obj_property name="ElementShortName">lr</obj_property>
+      <obj_property name="ObjectShortName">lr</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider20" type="divider">
+      <obj_property name="label">Stereo / RX</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/stereo_rx_ready">
+      <obj_property name="ElementShortName">stereo_rx_ready</obj_property>
+      <obj_property name="ObjectShortName">stereo_rx_ready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/stereo_rx_valid">
+      <obj_property name="ElementShortName">stereo_rx_valid</obj_property>
+      <obj_property name="ObjectShortName">stereo_rx_valid</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/i2s_tb/stereo_rx_data">
+      <obj_property name="ElementShortName">stereo_rx_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">stereo_rx_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider20" type="divider">
+      <obj_property name="label">TX / buffer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_almost_empty">
+      <obj_property name="ElementShortName">tx_almost_empty</obj_property>
+      <obj_property name="ObjectShortName">tx_almost_empty</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_empty">
+      <obj_property name="ElementShortName">tx_empty</obj_property>
+      <obj_property name="ObjectShortName">tx_empty</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_underflow">
+      <obj_property name="ElementShortName">tx_underflow</obj_property>
+      <obj_property name="ObjectShortName">tx_underflow</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_almost_full">
+      <obj_property name="ElementShortName">tx_almost_full</obj_property>
+      <obj_property name="ObjectShortName">tx_almost_full</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_full">
+      <obj_property name="ElementShortName">tx_full</obj_property>
+      <obj_property name="ObjectShortName">tx_full</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/tx_overflow">
+      <obj_property name="ElementShortName">tx_overflow</obj_property>
+      <obj_property name="ObjectShortName">tx_overflow</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider20" type="divider">
+      <obj_property name="label">TX FIFO</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/stereo_ready">
+      <obj_property name="ElementShortName">stereo_ready</obj_property>
+      <obj_property name="ObjectShortName">stereo_ready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/stereo_valid">
+      <obj_property name="ElementShortName">stereo_valid</obj_property>
+      <obj_property name="ObjectShortName">stereo_valid</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/i2s_tb/dut/i2s_tx_inst/stereo_data">
+      <obj_property name="ElementShortName">stereo_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">stereo_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/fifo_data_valid_s">
+      <obj_property name="ElementShortName">fifo_data_valid_s</obj_property>
+      <obj_property name="ObjectShortName">fifo_data_valid_s</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/fifo_rd_en_s">
+      <obj_property name="ElementShortName">fifo_rd_en_s</obj_property>
+      <obj_property name="ObjectShortName">fifo_rd_en_s</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/i2s_tb/dut/i2s_tx_inst/fifo_dout_s">
+      <obj_property name="ElementShortName">fifo_dout_s[15:0]</obj_property>
+      <obj_property name="ObjectShortName">fifo_dout_s[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider20" type="divider">
+      <obj_property name="label">I2S / TX</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/i2s_tb/dut/i2s_tx_inst/pointer_reg">
+      <obj_property name="ElementShortName">pointer_reg</obj_property>
+      <obj_property name="ObjectShortName">pointer_reg</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/bclk">
+      <obj_property name="ElementShortName">bclk</obj_property>
+      <obj_property name="ObjectShortName">bclk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/lr">
+      <obj_property name="ElementShortName">lr</obj_property>
+      <obj_property name="ObjectShortName">lr</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/i2s_tb/dut/i2s_tx_inst/dout">
+      <obj_property name="ElementShortName">dout</obj_property>
+      <obj_property name="ObjectShortName">dout</obj_property>
+   </wvobject>
+</wave_config>
