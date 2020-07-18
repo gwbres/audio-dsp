@@ -26,7 +26,7 @@ xpdf $git/doc/documentation.pdf
 
 ## Getting Started
 
-Install Vivado, this project was developed using Vivado 2019.2, the provided setup script can be used in this case
+Install Vivado, this project was developed using Vivado 2020.1, the provided setup script can be used in this case
 
 ```bash
 export XILINX_PATH=/opt/Xilinx
@@ -39,7 +39,7 @@ The reference design can then be opened with
 vivado $git/design/design.tcl
 ```
 
-Synthesis & implementation are only guaranteed for Vivado 2019.2. The user may try other versions but
+Synthesis & implementation are only guaranteed for Vivado 2020.1. The user may try other versions but
 
 in any case, the design will now synthesize against a version of Vivado where XPM macros are not supported.
 
