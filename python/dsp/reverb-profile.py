@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 
 # api
 from audio.wav import *
-#import wave
+
+from tools.os_utils import listfile
+from tools.xilinx import xlnx_coe_writer
 
 def _parseIntegerValue (self, content):
 	integer = 0
@@ -16,20 +18,24 @@ def _parseIntegerValue (self, content):
 	return integer
 
 def main (argv):
+	if len(argv) == 0:
+		wav = Wav('../../data/reverb-profiles/Nice Drum Room.wav')
+	else:
+		wav_file = argv[0]
+
 	#wav = Wav('../../data/reverb-profiles/Deep Space.wav')
 	#wav = Wav('../../data/reverb-profiles/BIG HALL E001 M2S.wav')
 	#wav = Wav('../../data/reverb-profiles/BIG HALL E003 M2S.wav')
 	#wav = Wav('../../data/reverb-profiles/WIDE HALL-1.wav')
 	#wav = Wav('../../data/reverb-profiles/CORRIDOR FLUTTER ECHO E001 M2S.wav')
 	#wav = Wav('../../data/reverb-profiles/Large Wide Echo Hall.wav')
-	wav = Wav('../../data/reverb-profiles/Nice Drum Room.wav')
 	
-	#wav = wave.open('../../data/reverb-profiles/St Nicolaes Church.wav')
-	#nframes = wav.getnframes()
-	#print(wav.readframes(nframes))
-	
-	print(wav)
+	print(wav) # .wav infos
 	data = wav.getData()
+	
+	# convert impulse response
+	# to .coe file
+	
 
 	fig = plt.figure(1)
 
@@ -53,7 +59,7 @@ def main (argv):
 	
 	ax.grid(True)
 	ax.legend(loc='best')
-	
+
 	plt.show()
 
 if __name__ == "__main__":

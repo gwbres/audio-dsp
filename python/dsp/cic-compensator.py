@@ -8,7 +8,7 @@ from scipy import signal
 import matplotlib.pyplot as plt
 
 # api
-from xilinx.tools import xlnx_coe_writer 
+from tools.xilinx import xlnx_coe_writer 
 
 def main (argv):
 	
