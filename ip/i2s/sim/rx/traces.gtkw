@@ -1,0 +1,32 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sat Jul 18 13:03:28 2020
+[*]
+[dumpfile] "/hdd/git/audio-dsp/ip/i2s/sim/rx/traces.vcd"
+[dumpfile_mtime] "Sat Jul 18 13:02:38 2020"
+[dumpfile_size] 16576512
+[savefile] "/hdd/git/audio-dsp/ip/i2s/sim/rx/traces.gtkw"
+[timestart] 5996500000
+[size] 1440 791
+[pos] -1 -1
+*-27.000000 6325000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] i2s_rx_tb.
+[sst_width] 207
+[signals_width] 220
+[sst_expanded] 1
+[sst_vpaned_height] 221
+@200
+-I2S
+@28
+i2s_rx_tb.bclk
+i2s_rx_tb.din
+i2s_rx_tb.lr
+@201
+-STEREO (out)
+@28
+i2s_rx_tb.clk
+i2s_rx_tb.stereo_out_valid
+@22
+i2s_rx_tb.stereo_out_data[15:0]
+[pattern_trace] 1
+[pattern_trace] 0

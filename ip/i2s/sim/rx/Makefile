@@ -1,9 +1,11 @@
 GHDL = ghdl
 GTKWAVE = /usr/bin/gtkwave
 
+RM = rm -rf
+
 TESTBENCH = i2s_rx_tb
 
-SOURCES = ../src/i2s_rx.vhd
+SOURCES = ../../src/i2s_rx.vhd
 
 all: run_sim 
 
@@ -18,3 +20,7 @@ run_sim: simulate
 
 waveform: run_sim
 	$(GTKWAVE) traces.gtkw
+
+.PHONY:
+clean:
+	$(RM) *.vcd *.cf
