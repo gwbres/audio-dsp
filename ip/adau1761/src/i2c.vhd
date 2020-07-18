@@ -39,7 +39,7 @@ begin
 		inst_address => inst_address,
 		inst_data    => inst_data,
 		i2c_scl      => i2c_scl,
-		i1c_sda_i      => i2c_sda_i,
+		i2c_sda_i      => i2c_sda_i,
 		i2c_sda_o      => i2c_sda_o,
 		i2c_sda_t      => i2c_sda_t,
 		inputs       => sw_full,
