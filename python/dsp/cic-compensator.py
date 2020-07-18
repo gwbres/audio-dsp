@@ -1,55 +1,14 @@
 #! /usr/bin/env python3
 
 import sys
+
 import numpy as np
 from scipy import signal
+
 import matplotlib.pyplot as plt
 
-def sign_extend (number, bits):
-	"""
-	Sign extends given number
-	for specified amount of bits
-	"""
-	if number < 0:
-		binary = bin(number)[3:] # '-0b'
-		if len(binary) < bits: 
-			n_stuff = bits - len(binary)
-			for i in range (0, n_stuff):
-				binary = '1' + binary
-			return int(binary,2)
-		else:
-			return number
-	else:
-		return number
-
-def convert_to_xilinx_coe (data, fp, bits=16, signed=True):
-	"""
-	Converts given 1D data array (float)
-	to 1D integer & normalized data
-	into xilinx compliant .coe file
-	"""
-	if signed:
-		norm = pow(2,bits-1)
-	else:
-		norm = pow(2,bits) 
-
-	format_string = '{:0' + str(int(np.log2(bits))) + 'x}'
-
-	with open(fp, "w") as fd:
-		fd.write('memory_initialization_radix=16;\n') # hexa
-		fd.write('memory_initialization_vector=\n\t') # hexa
-		for i in range (0, len(data)-1):
-			d = int(data[i] * norm)
-			d = sign_extend(d, bits)
-			fd.write(format_string.format(d)+',')
-
-			if (i%8) == 7:
-				fd.write('\n\t')
-
-		d = int(data[-1] * norm)
-		d = sign_extend(d, bits)
-		fd.write(format_string.format(d))
-		fd.write(';')
+# api
+from xilinx.tools import xlnx_coe_writer 
 
 def main (argv):
 	
@@ -61,6 +20,7 @@ def main (argv):
 	# FIR filter designer
 	ncoef = 128 # nb of coefficients to be implemented
 	bw = 30 # cut off in [%] on new nyquist band
+	bits = 16 # nb of bits to represent each coef in 2s complement format
 	
 	for arg in argv:
 		key = arg.split('=')[0]
@@ -77,6 +37,9 @@ def main (argv):
 
 		elif key == 'ncoef':
 			ncoef = int(value)
+
+		elif key == 'bits':
+			bits = int(value)
 	
 	fig = plt.figure(1)
 	fig.set_size_inches(8,8)
@@ -173,8 +136,8 @@ def main (argv):
 	a /= max(a)
 
 	fp = 'fir{:d}-cic{:d}-m1-n{:d}.coe'.format(ncoef, R, N)
-	convert_to_xilinx_coe (a, fp, bits=16, signed=True)
-	print('Xilinx coefficient file {:s} has been created'.format(fp))
+	xlnx_coe_writer(a, fp, bits=bits, signed=True)
+	print('Xilinx coef file {:s} has been created'.format(fp))
 	
 	delay = np.linspace(-len(a)//2, len(a)//2, len(a))
 	ax3.plot(delay, a, '-x', label='h(z) with {:d} coefs'.format(ncoef)) # plot impulse response
