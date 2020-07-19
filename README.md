@@ -10,7 +10,7 @@ development platforms (ADAU 1761).
 
 ## System
 
-![bloc_design](/hdd/git/audio-dsp/doc/images/bloc_design.png)
+![Bloc Design](https://github.com/gwbres/audio-dsp/blob/master/doc/images/bloc_design.png)
 
 + CIC decimation and interpolation filters
 + CIC compensation filters (implemented as FIR filters)
