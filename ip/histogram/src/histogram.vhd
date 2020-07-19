@@ -3,7 +3,7 @@ use     ieee.math_real.all;
 use     ieee.numeric_std.all;
 use     ieee.std_logic_1164.all;
 
-entity magnitude_histogram is
+entity histogram is
 generic (
 	G_HISTOGRAM_X_PIXELS: positive := 128; -- nb X pixels
 	G_HISTOGRAM_Y_PIXELS: positive := 32; -- nb Y pixels
@@ -20,9 +20,9 @@ port (
 	histogram_eof: out std_logic;
 	histogram_pxl: out std_logic_vector(8-1 downto 0)
 );
-end magnitude_histogram;
+end histogram;
 
-architecture rtl of magnitude_histogram is
+architecture rtl of histogram is
 
 	constant CLOG2_HISTOGRAM_X_PIXELS: natural := integer(ceil(log2(real(G_HISTOGRAM_X_PIXELS))));
 	constant CLOG2_HISTOGRAM_Y_PIXELS: natural := integer(ceil(log2(real(G_HISTOGRAM_Y_PIXELS))));
