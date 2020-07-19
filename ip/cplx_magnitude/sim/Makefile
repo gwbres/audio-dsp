@@ -5,7 +5,7 @@ RM = rm -rf
 
 TESTBENCH = testbench
 
-SOURCES = ../src/cplx_magnitude.vhd
+SOURCES = ../src/complex_magnitude.vhd
 
 GFLAGS += --std=08
 

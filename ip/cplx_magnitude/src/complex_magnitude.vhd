@@ -2,7 +2,7 @@ library ieee;
 use     ieee.numeric_std.all;
 use     ieee.std_logic_1164.all;
 
-entity cplx_magnitude is
+entity complex_magnitude is
 generic (
 	G_DATA_WIDTH: natural := 16
 );
@@ -18,9 +18,9 @@ port (
 	magnitude_data: out std_logic_vector(2*G_DATA_WIDTH-1 downto 0);
 	magnitude_last: out std_logic
 );
-end cplx_magnitude;
+end complex_magnitude;
 
-architecture rtl of cplx_magnitude is
+architecture rtl of complex_magnitude is
 
 	signal ab_reg_valid: std_logic := '0';
 	signal a_reg, b_reg: std_logic_vector(2*G_DATA_WIDTH-1 downto 0) := (others => '0');

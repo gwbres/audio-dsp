@@ -51,7 +51,7 @@ begin
 	end if;
 	end process;
 
-	dut: entity work.cplx_magnitude
+	dut: entity work.complex_magnitude
 	generic map (
 		G_DATA_WIDTH => 8
 	) port map (
