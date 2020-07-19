@@ -486,11 +486,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="867.79257"
-     inkscape:cy="481.6169"
+     inkscape:zoom="0.7"
+     inkscape:cx="961.05298"
+     inkscape:cy="430.18249"
      inkscape:document-units="mm"
-     inkscape:current-layer="g3198-8-8-8-0"
+     inkscape:current-layer="g11275"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -509,7 +509,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1132,7 +1132,7 @@
              sodipodi:role="line"
              x="289.88391"
              y="128.04398"
-             style="font-weight:bold;font-size:4.93888903px;text-align:center;text-anchor:middle;stroke-width:0.14239089">Assymetry</tspan></text>
+             style="font-weight:bold;font-size:4.93888903px;text-align:center;text-anchor:middle;stroke-width:0.14239089">Asymetry</tspan></text>
       </g>
     </g>
     <g
