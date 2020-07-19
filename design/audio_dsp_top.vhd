@@ -52,6 +52,36 @@ architecture rtl of audio_dsp_top is
 	signal fft_demux_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
 	signal fft_demux_data_s: stereo_data_array := (others => (others => '0'));
 
+	-- ######################
+	-- Frequency domain
+	-- ######################
+	--component xilinx_fft128_single_channel is
+	--port (
+	--	aclk: in std_logic;
+	--	-- config
+	--	s_axis_config_tready: out std_logic;
+	--	s_axis_config_tvalid: in std_logic;
+	--	s_axis_config_tdata: in std_logic_vector(15 downto 0);
+	--	-- s_axis_data
+	--	s_axis_data_tready: out std_logic;
+	--	s_axis_data_tvalid: in std_logic;
+	--	s_axis_data_tdata: in std_logic_vector(31 downto 0);
+	--	s_axis_data_tlast: in std_logic;
+	--	-- m_axis_data
+	--	m_axis_data_tready: out std_logic;
+	--	m_axis_data_tvalid: in std_logic;
+	--	m_axis_data_tdata: in std_logic_vector(31 downto 0);
+	--	m_axis_data_tlast: in std_logic;
+	--	-- flags
+	--	event_frame_started: out std_logic;
+	--	event_tlast_unexpected: out std_logic;
+	--	event_tlast_missing: out std_logic;
+	--	event_status_channel_halt: out std_logic;
+	--	event_data_in_channel_halt: out std_logic;
+	--	event_data_out_channel_halt: out std_logic
+	--);
+	--end component xilinx_fft128_single_channel;
+
 	type fft_sel_reg_type is array (0 to L+R) of std_logic_vector(2 downto 0);
 	signal fft_sel_reg: fft_sel_reg_type := (others => (others => '0'));
 	
@@ -62,10 +92,6 @@ architecture rtl of audio_dsp_top is
 	signal fft_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
 	signal fft_data_s: stereo_data_array := (others => (others => '0'));
 	signal fft_last_s: std_logic_vector(L+R downto 0) := (others => '0');
-	
-	signal fft_reframed_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
-	signal fft_reframed_data_s: stereo_data_array := (others => (others => '0'));
-	signal fft_reframed_last_s: std_logic_vector(L+R downto 0) := (others => '0');
 
 	signal cplx_magnitude_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
 	signal cplx_magnitude_data_s: stereo_data_array := (others => (others => '0'));
@@ -227,9 +253,30 @@ begin
 --	-- Xilinx FFT
 --	-- processes a single channel
 --	-- ##########################
---	xlnx_fft_chx_inst: xilinx_fft128
+--	xlnx_fft_chx_inst: xilinx_fft128_single_channel
 --	port map (
---		clk => clk100,
+--		aclk => clk100,
+--		-- config
+--		s_axis_config_tready => fft_config_ready_s(i),
+--		s_axis_config_tvalid => fft_config_valid_s(i),
+--		s_axis_config_tdata => fft_config_data_s(i),
+--		-- data (in)
+--		s_axis_data_tready => fft_data_in_ready_s(i),
+--		s_axis_data_tvalid => fft_data_in_valid_s(i),
+--		s_axis_data_tdata => fft_data_in_data_s(i),
+--		s_axis_data_tlast => fft_data_in_last_s(i),
+--		-- data (out)
+--		m_axis_data_tready => fft_data_out_ready_s(i),
+--		m_axis_data_tvalid => fft_data_out_valid_s(i),
+--		m_axis_data_tdata => fft_data_out_data_s(i),
+--		m_axis_data_tlast => fft_data_out_last_s(i),
+--		-- flags
+--		event_frame_started => open,
+--		event_tlast_unexpected => open,
+--		event_tlast_missing => open,
+--		event_status_channel_halt => open,
+--		event_data_in_channel_halt => open,
+--		event_data_out_channel_halt => open
 --	);
 --
 --	-- Discard upper symetric spectrum
