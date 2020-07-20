@@ -101,8 +101,10 @@ end generate;
 		clk => clk,
 		data_in_valid => data_in_valid,
 		data_in_data => data_in_data,
+		data_in_last => '0',
 		data_out_valid => intg_stages_valid(0),
-		data_out_data => intg_stages_data(0)
+		data_out_data => intg_stages_data(0),
+		data_out_last => open
 	);
 
 integrator_stages_gen: for n in 1 to G_CIC_N-1 generate
@@ -114,8 +116,10 @@ integrator_stages_gen: for n in 1 to G_CIC_N-1 generate
 		clk => clk,
 		data_in_valid => intg_stages_valid(n-1),
 		data_in_data => intg_stages_data(n-1),
+		data_in_last => '0',
 		data_out_valid => intg_stages_valid(n),
-		data_out_data => intg_stages_data(n)
+		data_out_data => intg_stages_data(n),
+		data_out_last => open
 	);
 
 end generate;

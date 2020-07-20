@@ -34,10 +34,14 @@ g_cic_decimation_filter_gen: if (G_IS_DECIMATOR) generate
 		G_DATA_WIDTH => G_DATA_WIDTH
 	) port map (
 		clk => clk,
+		-- stream (in)
 		data_in_valid => data_in_valid,
 		data_in_data => data_in_data,
+		data_in_last => data_in_last,
+		-- stream (out)
 		data_out_valid => data_out_valid,
-		data_out_data => data_out_data
+		data_out_data => data_out_data,
+		data_out_last => data_out_last
 	);
 
 else generate
