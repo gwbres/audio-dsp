@@ -30,9 +30,14 @@ begin
 	begin
 	if rising_edge (clk) then
 		data_in_valid <= not(data_in_valid);
+		data_in_valid <= '1';
 		data_in_last <= '0';
 		if data_in_valid = '1' then
-			data_in_data <= std_logic_vector(unsigned(data_in_data)+1);
+			if unsigned(data_in_data) < 2**7-1 then 
+				data_in_data <= std_logic_vector(unsigned(data_in_data)+1);
+			else
+				data_in_data <= (others => '0');
+			end if;
 		end if;
 	end if;
 	end process;
