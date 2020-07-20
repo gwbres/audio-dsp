@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Mon Jul 20 15:49:51 2020
+[*] Mon Jul 20 17:35:54 2020
 [*]
 [dumpfile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.vcd"
-[dumpfile_mtime] "Mon Jul 20 15:47:20 2020"
-[dumpfile_size] 11583488
+[dumpfile_mtime] "Mon Jul 20 17:35:43 2020"
+[dumpfile_size] 12533760
 [savefile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.gtkw"
-[timestart] 0
+[timestart] 2497700000
 [size] 1440 791
 [pos] -1 -1
-*-27.000000 25000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.000000 2555000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.dut.
 [treeopen] testbench.dut.g_cic_decimation_filter_gen.
@@ -17,7 +17,7 @@
 [treeopen] testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).
 [treeopen] testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).
 [sst_width] 207
-[signals_width] 206
+[signals_width] 238
 [sst_expanded] 1
 [sst_vpaned_height] 221
 @28
@@ -32,15 +32,48 @@ testbench.data_in_data[7:0]
 testbench.data_in_last
 @200
 -Integrators
+-pre-adder
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_a_reg[13:0]
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_b_reg[13:0]
+@c00022
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+@28
+(0)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(1)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(2)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(3)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(4)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(5)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(6)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(7)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(8)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(9)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(10)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(11)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(12)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(13)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+(14)testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_data[14:0]
+@1401200
+-group_end
+@200
+-logic
+@29
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_overflow
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.both_positive
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.both_negative
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_a_reg_z1[13:0]
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.pre_add_b_reg_z1[13:0]
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.reg_data[13:0]
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_valid
 @22
+>-6000000
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_data[13:0]
-@28
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_valid
-@22
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_data[13:0]
 @200
+>0
 -Decimation
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_valid
@@ -54,13 +87,13 @@ testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stag
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stage0.data_out_data[13:0]
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_valid
-@23
+@24
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_data[13:0]
 @200
 -Stream (out)
 @28
 testbench.data_out_valid
-@22
+@24
 testbench.data_out_data[9:0]
 @28
 testbench.data_out_last
