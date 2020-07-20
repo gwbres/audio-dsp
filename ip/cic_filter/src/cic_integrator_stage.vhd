@@ -21,38 +21,58 @@ end cic_integrator_stage;
 
 architecture rtl of cic_integrator_stage is
 
-	signal add_valid: std_logic;
-	signal add_data: std_logic_vector(G_DATA_WIDTH+1-1 downto 0) := (others => '0');
+	signal pre_add_valid: std_logic;
+	signal pre_add_A_reg, pre_add_B_reg: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
+	signal pre_add_A_reg_z1, pre_add_B_reg_z1: std_logic_vector(G_DATA_WIDTH-1 downto 0);
+	signal pre_add_data: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
+	signal pre_add_last: std_logic;
+
 	signal data_in_reg: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
 
-	signal sign_bits_high: std_logic;
+	signal pre_add_overflow: std_logic;
+	signal both_positive, both_negative: std_logic;
 
 	signal reg_valid: std_logic;
 	signal reg_data: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
+	signal reg_last: std_logic;
+
 begin
+
+	pre_add_A_reg <= data_in_data;
+	pre_add_B_reg <= reg_data; 
 
 	sync_presum_stage: process (clk)
 	begin
 	if rising_edge (clk) then
-		add_valid <= '0';
-		add_last <= '0';
+		pre_add_valid <= '0';
+		pre_add_last <= '0';
+		
 		if data_in_valid = '1' then
-			add_valid <= '1';
-			add_data <= std_logic_vector (
-				signed ('0' & data_in_data)
-				+ signed ('0' & reg_data)
+			pre_add_valid <= '1';
+			pre_add_data <= std_logic_vector (
+				signed (pre_add_A_reg)
+				+ signed (pre_add_B_reg)
 			);
 
-			data_in_reg <= data_in_data;
+			pre_add_A_reg_z1 <= pre_add_A_reg;
+			pre_add_B_reg_z1 <= pre_add_B_reg;
 
 			if data_in_last = '1' then
-				add_last <= '1';
+				pre_add_last <= '1';
 			end if;
 		end if;
 	end if;
 	end process;
 
-	sign_bits_high <= data_in_reg(data_in_reg'high) and reg_data(reg_data'high);
+	pre_add_overflow <= pre_add_data(pre_add_data'high);
+	
+	both_negative <= '1' when pre_add_A_reg_z1(pre_add_A_reg_z1'high) = '1' 
+		and pre_add_B_reg_z1(pre_add_B_reg_z1'high) = '1' 
+			else '0';
+
+	both_positive <= '1' when pre_add_A_reg_z1(pre_add_A_reg_z1'high) = '0' 
+		and pre_add_B_reg_z1(pre_add_B_reg_z1'high) = '0'
+			else '0';
 
 	sync_2s_saturation_logic: process (clk)
 	begin
@@ -60,25 +80,26 @@ begin
 		reg_valid <= '0';
 		reg_last <= '0';
 
-		if add_valid = '1' then
+		if pre_add_valid = '1' then
 			reg_valid <= '1';
 			
-			if add_last = '1' then
+			if pre_add_last = '1' then
 				reg_last <= '1';
 			end if;
 
-			if add_data(add_data'high) = '1' then
-				if sign_bits_high = '1' then
-					-- 2's (negative) saturation
+			if pre_add_overflow = '1' then 
+				if both_negative = '1' then
+					-- negative saturation
 					reg_data(reg_data'high) <= '1';
 					reg_data(reg_data'high-1 downto 0) <= (others => '0');
 				else
-					-- 2's (positive) saturation
+					-- positive saturation
 					reg_data(reg_data'high) <= '0';
 					reg_data(reg_data'high-1 downto 0) <= (others => '1');
 				end if;
 			else
-				reg_data <= add_data(G_DATA_WIDTH-1 downto 0); 
+				-- truncated pre add
+				reg_data <= pre_add_data(reg_data'high downto 0);
 			end if;
 		end if;
 	end if;
