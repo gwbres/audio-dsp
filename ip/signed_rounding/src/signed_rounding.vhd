@@ -55,6 +55,6 @@ begin
 
 	data_out_valid <= round_valid;
 	data_out_data <= round_data;
-	data_out_last <= roud_last;
+	data_out_last <= round_last;
 
 end rtl;
