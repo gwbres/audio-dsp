@@ -5,7 +5,9 @@ RM = rm -rf
 
 TESTBENCH = testbench
 
-SOURCES  = ../src/cic_integrator_stage.vhd
+SOURCES = ../../signed_rounding/src/signed_rounding.vhd
+
+SOURCES += ../src/cic_integrator_stage.vhd
 SOURCES += ../src/cic_comb_stage.vhd
 SOURCES += ../src/cic_decimator.vhd
 SOURCES += ../src/cic_interpolator.vhd

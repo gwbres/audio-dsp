@@ -46,14 +46,12 @@ architecture rtl of cic_decimator is
 	signal comb_stages_data: cic_array_type := (others => (others => '0'));
 
 	-- output rounding
-	signal round_A_reg: std_logic_vector(G_DATA_WIDTH+C_CIC_BIT_GROWTH-1 downto 0);
-	signal round_B_reg: std_logic_vector(G_DATA_WIDTH+C_CIC_BIT_GROWTH-1 downto 0);
+	signal comb_stage_n_lsb: std_logic;
+	signal comb_stage_n_msb: std_logic_vector(G_DATA_WIDTH+G_CIC_R/4-1 downto 0);
+
 	signal round_valid: std_logic;
-	signal round_data: std_logic_vector(G_DATA_WIDTH+C_CIC_BIT_GROWTH-1 downto 0);
+	signal round_reg: std_logic_vector(G_DATA_WIDTH+G_CIC_R/4-1 downto 0) := (others => '0');
 	
-	-- output register
-	signal output_reg_valid: std_logic := '0';
-	signal output_reg_data: std_logic_vector(G_DATA_WIDTH + G_CIC_R/4-1 downto 0) := (others => '0');
 begin
 
 	-------------------
@@ -142,50 +140,21 @@ comb_stages_gen: for n in 1 to G_CIC_N-1 generate
 
 end generate;
 
-	-- discard non meaningful bits
-	-- using proper 2's complement rounding
-	-- Output width is Data Input Width + R/4
-
-	--signal Input_value:signed(11 downto 0);
-	--signal rounded:signed(6 downto 0);
-	--signal input_plus_one_half:signed(11 downto 0);
-	--input_plus_one_half<= input_value + "010000";  --note the '1' is in bit 4, we keep bits 5 on up after the add
-	--rounded<= input_plus_one_half(11 downto 5);
-
-	round_A_reg <= comb_stages_data(G_CIC_N-1);
-	
-	round_B_reg(G_DATA_WIDTH + C_CIC_BIT_GROWTH-1 downto G_DATA_WIDTH + G_CIC_R/4) <= (others => '0'); 
-	round_B_reg(G_DATA_WIDTH + G_CIC_R/4-1) <= '0'; -- meaningful MSB
-	round_B_reg(G_DATA_WIDTH + G_CIC_R/4-2) <= '1';
-	round_B_reg(G_DATA_WIDTH + G_CIC_R/4-3 downto 0) <= (others => '0'); -- meaningful LSB
-
-	sync_output_rounding: process (clk)
-	begin
-	if rising_edge (clk) then
-		round_valid <= '0';
-		if comb_stages_valid(G_CIC_N-1) = '1' then
-			round_valid <= '1';
-			round_data <= std_logic_vector (
-				signed(round_A_reg) + signed(round_B_reg)
-			);
-
-		end if;
-	end if;
-	end process;
-
---	sync_output_truncation: process (clk)
---	begin
---	if rising_edge (clk) then
---		output_reg_valid <= '0';
---		if round_valid = '1' then
---			output_reg_valid <= '1';
---			output_reg_data <= round_data(round_data'length-1 downto round_data'length-G_DATA_WIDTH + G_CIC_R/4);
---		end if;
---	end if;
---	end process;
-
-	data_out_valid <= output_reg_valid;
-	data_out_data <= output_reg_data;
-	data_out_last <= '0';
+	-- output rounding
+	signed_rounder_inst: entity work.signed_rounding
+	generic map (
+		G_DIN_WIDTH => G_DATA_WIDTH + C_CIC_BIT_GROWTH,
+		G_DOUT_WIDTH => G_DATA_WIDTH + G_CIC_R / 4
+	) port map (
+		clk => clk,
+		-- stream (in)
+		data_in_valid => comb_stages_valid(G_CIC_N-1),
+		data_in_data => comb_stages_data(G_CIC_N-1),
+		data_in_last => '0',
+		-- stream (out)
+		data_out_valid => data_out_valid,
+		data_out_data => data_out_data,
+		data_out_last => data_out_last
+	);
 
 end rtl;
