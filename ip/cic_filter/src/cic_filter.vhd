@@ -1,5 +1,4 @@
 library ieee;
-use     ieee.numeric_std.all;
 use     ieee.std_logic_1164.all;
 
 entity cic_filter is
@@ -11,12 +10,14 @@ generic (
 );
 port (
 	clk: in std_logic;
-	-- DATA/in
+	-- data (in)
 	data_in_valid: in std_logic;
 	data_in_data: in std_logic_vector(G_DATA_WIDTH-1 downto 0);
-	-- DATA/out
+	data_in_last: in std_logic;
+	-- data (out)
 	data_out_valid: out std_logic;
-	data_out_data: out std_logic_vector(G_DATA_WIDTH-1 downto 0)
+	data_out_data: out std_logic_vector(G_DATA_WIDTH + G_CIC_R/4-1 downto 0);
+	data_out_last: out std_logic
 );
 end cic_filter;
 
@@ -24,7 +25,7 @@ architecture rtl of cic_filter is
 
 begin
 
-g_cic_decimation_filter_gen: generate if (G_IS_DECIMATOR) generate
+g_cic_decimation_filter_gen: if (G_IS_DECIMATOR) generate
 	
 	cic_decim_filter_inst: entity work.cic_decimator
 	generic map (
@@ -39,7 +40,7 @@ g_cic_decimation_filter_gen: generate if (G_IS_DECIMATOR) generate
 		data_out_data => data_out_data
 	);
 
-else
+else generate
 
 	cic_interp_filter_inst: entity work.cic_interpolator
 	generic map (
@@ -54,6 +55,6 @@ else
 		data_out_data => data_out_data
 	);
 
-end if;
+end generate;
 
 end rtl;

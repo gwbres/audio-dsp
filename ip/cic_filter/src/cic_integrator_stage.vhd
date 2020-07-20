@@ -8,12 +8,14 @@ generic (
 );
 port (
 	clk: in std_logic;
-	-- DATA/in
+	-- data (in) 
 	data_in_valid: in std_logic;
 	data_in_data: in std_logic_vector(G_DATA_WIDTH-1 downto 0);
-	-- DATA/out
+	data_in_last: in std_logic;
+	-- data (out)
 	data_out_valid: out std_logic;
-	data_out_data: out std_logic_vector(G_DATA_WIDTH-1 downto 0)
+	data_out_data: out std_logic_vector(G_DATA_WIDTH-1 downto 0);
+	data_out_last: out std_logic
 );
 end cic_integrator_stage;
 
@@ -26,13 +28,14 @@ architecture rtl of cic_integrator_stage is
 	signal sign_bits_high: std_logic;
 
 	signal reg_valid: std_logic;
-	signal reg_data, reg_olddata: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
+	signal reg_data: std_logic_vector(G_DATA_WIDTH-1 downto 0) := (others => '0');
 begin
 
 	sync_presum_stage: process (clk)
 	begin
 	if rising_edge (clk) then
 		add_valid <= '0';
+		add_last <= '0';
 		if data_in_valid = '1' then
 			add_valid <= '1';
 			add_data <= std_logic_vector (
@@ -41,6 +44,10 @@ begin
 			);
 
 			data_in_reg <= data_in_data;
+
+			if data_in_last = '1' then
+				add_last <= '1';
+			end if;
 		end if;
 	end if;
 	end process;
@@ -51,8 +58,15 @@ begin
 	begin
 	if rising_edge (clk) then
 		reg_valid <= '0';
+		reg_last <= '0';
+
 		if add_valid = '1' then
 			reg_valid <= '1';
+			
+			if add_last = '1' then
+				reg_last <= '1';
+			end if;
+
 			if add_data(add_data'high) = '1' then
 				if sign_bits_high = '1' then
 					-- 2's (negative) saturation
@@ -72,5 +86,6 @@ begin
 
 	data_out_valid <= reg_valid;
 	data_out_data <= reg_data;
+	data_out_last <= reg_last;
 
 end rtl;

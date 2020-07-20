@@ -81,10 +81,10 @@ end generate;
 			end if;
 		else
 			interp_valid <= '1';
-			if interp_cnt < G_CIC_R-1 then
-				interp_cnt <= interp_cnt+1;
+			if interp_count < G_CIC_R-1 then
+				interp_count <= interp_count+1;
 			else
-				interp_cnt <= 0;
+				interp_count <= 0;
 				interp_zero_stuffing <= '0';
 			end if;
 		end if;
@@ -113,7 +113,7 @@ integrator_stages_gen: for n in 1 to G_CIC_N-1 generate
 	) port map (
 		clk => clk,
 		data_in_valid => intg_stages_valid(n-1),
-		data_in_data => intg_stages_data(n-1)
+		data_in_data => intg_stages_data(n-1),
 		data_out_valid => intg_stages_valid(n),
 		data_out_data => intg_stages_data(n)
 	);
