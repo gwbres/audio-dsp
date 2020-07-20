@@ -1,0 +1,68 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Mon Jul 20 15:49:51 2020
+[*]
+[dumpfile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.vcd"
+[dumpfile_mtime] "Mon Jul 20 15:47:20 2020"
+[dumpfile_size] 11583488
+[savefile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.gtkw"
+[timestart] 0
+[size] 1440 791
+[pos] -1 -1
+*-27.000000 25000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.dut.
+[treeopen] testbench.dut.g_cic_decimation_filter_gen.
+[treeopen] testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.
+[treeopen] testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).
+[treeopen] testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).
+[sst_width] 207
+[signals_width] 206
+[sst_expanded] 1
+[sst_vpaned_height] 221
+@28
+testbench.clk
+@200
+-Stream (in)
+@28
+testbench.data_in_valid
+@22
+testbench.data_in_data[7:0]
+@28
+testbench.data_in_last
+@200
+-Integrators
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_valid
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_data[13:0]
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_valid
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_data[13:0]
+@200
+-Decimation
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_valid
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_data[13:0]
+@200
+-Comb filters
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stage0.data_out_valid
+@22
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stage0.data_out_data[13:0]
+@28
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_valid
+@23
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_data[13:0]
+@200
+-Stream (out)
+@28
+testbench.data_out_valid
+@22
+testbench.data_out_data[9:0]
+@28
+testbench.data_out_last
+[pattern_trace] 1
+[pattern_trace] 0
