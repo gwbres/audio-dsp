@@ -1,0 +1,26 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue Jul 21 12:12:19 2020
+[*]
+[dumpfile] "/hdd/git/audio-dsp/ip/histogram_ramp_pattern/sim/traces.vcd"
+[dumpfile_mtime] "Tue Jul 21 12:11:56 2020"
+[dumpfile_size] 20811776
+[savefile] "/hdd/git/audio-dsp/ip/histogram_ramp_pattern/sim/traces.gtkw"
+[timestart] 0
+[size] 1440 791
+[pos] -435 -189
+*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 207
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 221
+@28
+testbench.clk
+testbench.data_out_ready
+testbench.data_out_valid
+@23
+testbench.data_out_data[4:0]
+@28
+testbench.data_out_last
+[pattern_trace] 1
+[pattern_trace] 0
