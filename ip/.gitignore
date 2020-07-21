@@ -4,3 +4,4 @@ histogram/sim/project_1
 oled/init_sequence_rom
 oled/charLib
 oled/pixel_buffer
+xilinx_fft256_single_channel
