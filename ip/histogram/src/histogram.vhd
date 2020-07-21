@@ -9,15 +9,15 @@ use     xpm.vcomponents.all;
 entity histogram is
 generic (
 	G_HISTOGRAM_WIDTH: positive := 128; 
-	G_HISTOGRAM_HEIGHT: positive := 32;
-	G_DATA_WIDTH: positive := 16 
+	G_HISTOGRAM_HEIGHT: positive := 32
 );
 port (
 	clk: in std_logic;
 	rst: in std_logic;
 	-- magnitude (in)
+	magnitude_ready: out std_logic;
 	magnitude_valid: in std_logic;
-	magnitude_data: in std_logic_vector(G_DATA_WIDTH-1 downto 0);
+	magnitude_data: in std_logic_vector(integer(ceil(log2(real(G_HISTOGRAM_HEIGHT))))-1 downto 0);
 	magnitude_last: in std_logic;
 	-- oled ctrl
 	oled_disp_on_ready: in std_logic;
@@ -73,24 +73,10 @@ architecture rtl of histogram is
 	signal oled_wr_addr_s: std_logic_vector(8 downto 0) := (others => '0');
 begin
 
-	-- launch OLED init. sequence
-	process (clk)
-	begin
-	if rising_edge (clk) then
-		if rst = '1' then
-			oled_disp_on_start_s <= '1';
-		else
-			if oled_disp_on_start_s = '1' then
-				if oled_disp_off_ready = '1' then
-					oled_disp_on_start_s <= '0';
-				end if;
-			end if;
-		end if;
-	end if;
-	end process;
+	magnitude_ready <= '0';
 
-	oled_init_done_s <= not(oled_disp_on_start_s);
-	oled_disp_on_start <= oled_disp_on_start_s;
+	oled_init_done_s <= '1'; --not(oled_disp_on_start_s);
+	oled_disp_on_start <= '1'; --oled_disp_on_start_s;
 	oled_disp_off_start <= '0';
 
 	-- push sane FFT/||^2 frames into buffer
