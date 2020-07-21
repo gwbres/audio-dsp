@@ -264,8 +264,9 @@ to be applied in the FIR filter:
 
 The Histogram IP core converts
 the power spectrum from the
-magnitude IP core
-to a histogram to be displayed on the OLED. \\
+complex magnitude, calculated from the
+FFT output, into a 
+histogram to be displayed on the OLED display. \\
 
 It is a simple mapping of the resulting
 power spectrum to a 2D array (X,Y) describing
@@ -274,6 +275,12 @@ the power spectrum along a frequency axis. \\
 %\begin{center}
 %	\includegraphics[width=0.75\linewidth]{fft_histogram.pdf} \\
 %\end{center}
+
+The histogram deals with one entire FFT frame / magnitude frame
+at a time, and may discard several if it cannot keep up with
+the FFT rate. It does not really matter in our application
+because we only want a visualization. The only
+importan thing is to process sane and complete FFT frames.
 
 \newpage
 \section{Simulation}
