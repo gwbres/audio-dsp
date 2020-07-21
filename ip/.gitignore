@@ -1,3 +1,6 @@
 adau1761/src/clk100_clk48_synth
 i2s/sim/top/sim_project
 histogram/sim/project_1
+oled/init_sequence_rom
+oled/charLib
+oled/pixel_buffer
