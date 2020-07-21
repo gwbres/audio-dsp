@@ -1,28 +1,33 @@
 # sys clock
-set_property IOSTANDARD "LVCMOS33"			[get_ports "clk100"]
-create_clock -period 10.0 -name "clk100"	[get_ports "clk100"]
+set_property IOSTANDARD LVCMOS33				[get_ports "clk100"]
 set_property PACKAGE_PIN Y9					[get_ports "clk100"]
+create_clock -period 10.0 -name "clk100"	[get_ports "clk100"]
 
 #########################
 ## ADAU 1761 
 #########################
-set_property IOSTANDARD "LVCMOS33"			[get_ports "adau_mclk"]
-create_clock -period 41.66 -name "clk24"	[get_ports "adau_mclk"]
+set_property IOSTANDARD LVCMOS33				[get_ports "adau_mclk"]
 set_property PACKAGE_PIN AB2					[get_ports "adau_mclk"]
+create_clock -period 41.66 -name "mclk"	[get_ports "adau_mclk"]
+
 # I2S
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_bclk"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_lr"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_din"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_dout"]
-set_property PACKAGE_PIN AA6			[get_ports "adau_bclk"]
+set_property IOSTANDARD LVCMOS33		[get_ports adau_bclk]
+set_property PACKAGE_PIN AA6			[get_ports adau_bclk]
+create_clock -period 41.66 -name "bclk"	[get_ports adau_bclk]
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {adau_bclk_IBUF}]
+
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_lr"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_din"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_dout"]
 set_property PACKAGE_PIN Y6			[get_ports "adau_lr"]
 set_property PACKAGE_PIN AA7			[get_ports "adau_din"]
 set_property PACKAGE_PIN Y8			[get_ports "adau_dout"]
+
 # I2C
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_sda"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_scl"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_addr0"]
-set_property IOSTANDARD "LVCMOS33" 	[get_ports "adau_addr1"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_sda"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_scl"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_addr0"]
+set_property IOSTANDARD LVCMOS33 	[get_ports "adau_addr1"]
 set_property PACKAGE_PIN AB5			[get_ports "adau_sda"]
 set_property PACKAGE_PIN AB4			[get_ports "adau_scl"]
 set_property PACKAGE_PIN AB1			[get_ports "adau_addr0"]
