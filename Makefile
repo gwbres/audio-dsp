@@ -12,6 +12,7 @@ $(BUILDROOT_DIR): $(BUILDROOT_DIR)
 
 $(BUILDROOT_SDIMAGE): $(BUILDROOT_DIR)
 	make -C $(BUILDROOT_DIR) zynq_zed_defconfig
+	cp software/zedboard-defconfig $(BUILDROOT_DIR)/.config
 	make -C $(BUILDROOT_DIR)
 	$(Q)echo "SD card image $@ has been built"
 
