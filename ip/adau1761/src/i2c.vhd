@@ -33,7 +33,7 @@ begin
 	);
 
 	Inst_i3c2: entity work.i3c2 GENERIC MAP (
-      clk_divide => "01111000"   -- 120 (48,000/120 = 400kHz I2C clock)
+      clk_divide => "11111010"   -- 250: 100,000/250 -> 400kHz I2C clock
    ) PORT MAP(
 		clk => clk,
 		inst_address => inst_address,

@@ -9,9 +9,8 @@ library ip_library;
 
 entity adau1761_top is
 port (
-	clk100: in std_logic;
-	clk48: out std_logic;
-	clk48_rst: out std_logic;
+	sys_clk: in std_logic;
+	sys_clk_rst: in std_logic;
 	mclk: out std_logic;
 	-- I2C
 	scl: out std_logic;
@@ -38,23 +37,18 @@ architecture rtl of adau1761_top is
 	-------------------------------------
 	-- clock synthesizer
 	-- CLOCK in: 100 MHz
-	-- Clock out (1): 48M (system clock)
+	-- Clock out (1): 48M 
 	-- Clock out (2): 24M (adau 'm'clock)
 	-------------------------------------
-	component clk100_clk48_synth is
+	component clk100_clk24_synth is
 	port (
 		clk_in1: in std_logic;
 		reset: in std_logic;
 		locked: out std_logic;
-		clk48: out std_logic;
 		clk24: out std_logic
 	);
-	end component clk100_clk48_synth;
+	end component clk100_clk24_synth;
 
-	signal clk48_s: std_logic;
-	signal clk48_rst_s: std_logic;
-	signal clk48_reset_reg: std_logic_vector(15 downto 0) := (others => '1');
-	
     ------------------------------
     -- IIC tri-state buffer
     ------------------------------
@@ -67,35 +61,20 @@ begin
 	------------------------------
 	-- Adau/System clk synthesizer
 	------------------------------
-	audio_clocks_synth_inst: clk100_clk48_synth
+	audio_clocks_synth_inst: clk100_clk24_synth
 	port map (
-		clk_in1 => clk100,
+		clk_in1 => sys_clk,
 		reset => '0',
 		locked => open,
-		clk48 => clk48_s,
 		clk24 => mclk
 	);
 
-	clk48 <= clk48_s;
-	clk48_rst_s <= clk48_reset_reg(clk48_reset_reg'high);
-	clk48_rst <= clk48_rst_s;
-
-	-- CLK48 reset bit generator
-	process (clk48_s)
-	begin
-	if rising_edge (clk48_s) then
-		if clk48_reset_reg(clk48_reset_reg'high) = '1' then
-			clk48_reset_reg <= clk48_reset_reg(clk48_reset_reg'length-1 downto 1) & '0';
-		end if;
-	end if;
-	end process;
-	
 	-----------------------
 	-- IIC
 	-----------------------
 	adau_iic_bus: entity work.i2c 
 	port map (
-		clk => clk48_s,
+		clk => sys_clk,
 		i2c_sda_i => i2c_sda_i_s,
 		i2c_sda_o => i2c_sda_o_s,
 		i2c_sda_t => i2c_sda_t_s,
@@ -122,8 +101,8 @@ begin
 	generic map (
 		G_DATA_WIDTH => 24
 	) port map (
-		clk => clk48_s, 
-		rst => clk48_rst_s,
+		clk => sys_clk, 
+		rst => sys_clk_rst,
 		-- tx buffer
 		tx_almost_empty => open,
 		tx_empty => open,
