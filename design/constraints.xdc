@@ -23,6 +23,18 @@ set_property PACKAGE_PIN Y6			[get_ports "adau_lr"]
 set_property PACKAGE_PIN AA7			[get_ports "adau_din"]
 set_property PACKAGE_PIN Y8			[get_ports "adau_dout"]
 
+# I2S pins
+set_input_delay -clock [get_clocks {bclk}] -min -add_delay 20.83 [get_ports {adau_lr}]
+set_input_delay -clock [get_clocks {bclk}] -max -add_delay 31.246 [get_ports {adau_lr}]
+set_input_delay -clock [get_clocks {bclk}] -min -add_delay 20.83 [get_ports {adau_din}]
+set_input_delay -clock [get_clocks {bclk}] -max -add_delay 31.246 [get_ports {adau_din}]
+set_input_delay -clock [get_clocks {bclk}] -min -add_delay 20.83 [get_ports {adau_dout}]
+set_input_delay -clock [get_clocks {bclk}] -max -add_delay 31.246 [get_ports {adau_dout}]
+
+# I2S rx: bclk -> clk100 (oversampled)
+set_false_path -from [get_clocks bclk] -to [get_clocks clk100]
+set_false_path -from [get_clocks clk100] -to [get_clocks bclk]
+
 # I2C
 set_property IOSTANDARD LVCMOS33 	[get_ports "adau_sda"]
 set_property IOSTANDARD LVCMOS33 	[get_ports "adau_scl"]
@@ -32,6 +44,9 @@ set_property PACKAGE_PIN AB5			[get_ports "adau_sda"]
 set_property PACKAGE_PIN AB4			[get_ports "adau_scl"]
 set_property PACKAGE_PIN AB1			[get_ports "adau_addr0"]
 set_property PACKAGE_PIN Y5			[get_ports "adau_addr1"]
+
+#set_input_delay -clock [get_clocks {}] -min -add_delay 2500.0 [get_ports {adau_sda}]
+#set_input_delay -clock [get_clocks {}] -max -add_delay 187500.0 [get_ports {adau_sda}]
 
 ############################
 # OLED display
