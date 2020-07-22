@@ -1,4 +1,5 @@
 library ieee;
+use     ieee.math_real.all;
 use     ieee.std_logic_1164.all;
 
 package system_pkg is
@@ -11,7 +12,10 @@ package system_pkg is
 
 	-- Histrogram / OLED
 	constant C_OLED_X_WIDTH: natural := 128;
-	constant C_OLED_Y_HEIGHT: natural := 5;
+	constant C_OLED_Y_HEIGHT: natural := 32;
+
+	constant C_LOG2_OLED_X_WIDTH: natural := integer(ceil(log2(real(C_OLED_X_WIDTH))));
+	constant C_LOG2_OLED_Y_HEIGHT: natural := integer(ceil(log2(real(C_OLED_Y_HEIGHT))));
 
 end package system_pkg;
 
