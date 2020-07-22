@@ -1,6 +1,9 @@
 library ieee;
 use     ieee.std_logic_1164.all;
 
+library unisim;
+use     unisim.vcomponents.all;
+
 library work;
 use     work.system_pkg.all;
 
@@ -22,11 +25,25 @@ port (
 	adau_bclk: in std_logic;
 	adau_lr: in std_logic;
 	adau_din: in std_logic;
-	adau_dout: out std_logic
+	adau_dout: out std_logic;
+	-- #####################
+	-- OLED
+	-- #####################
+	oled_sdin: out std_logic;
+	oled_sclk: out std_logic;
+	oled_dc: out std_logic;
+	oled_res: out std_logic;
+	oled_vbat: out std_logic;
+	oled_vdd: out std_logic
 );
 end audio_dsp_top;
 
 architecture rtl of audio_dsp_top is
+
+	-- sys clk
+	signal sys_clk: std_logic;
+	signal sys_clk_rst_reg: std_logic_vector(15 downto 0) := (others => '1');
+	signal sys_clk_rst: std_logic;
 
 	-- ######################
 	-- Audio Codec (Adau1761)
@@ -55,7 +72,7 @@ architecture rtl of audio_dsp_top is
 	-- ######################
 	-- Frequency domain
 	-- ######################
-	--component xilinx_fft128_single_channel is
+	--component xilinx_fft256_single_channel is
 	--port (
 	--	aclk: in std_logic;
 	--	-- config
@@ -97,21 +114,72 @@ architecture rtl of audio_dsp_top is
 	signal cplx_magnitude_data_s: stereo_data_array := (others => (others => '0'));
 	signal cplx_magnitude_last_s: std_logic_vector(L+R downto 0) := (others => '0');
 	
-	type histogram_data_array is array (0 to L+R) of std_logic_vector(C_OLED_Y_HEIGHT-1 downto 0);
-	signal histogram_eol: std_logic_vector(L+R downto 0) := (others => '0');
-	signal histogram_eof: std_logic_vector(L+R downto 0) := (others => '0');
-	signal histogram_pxl: histogram_data_array := (others => (others => '0'));
+	type stereo_histogram_dtype is array (0 to L+R) of std_logic_vector(C_LOG2_OLED_Y_HEIGHT-1 downto 0);
+   signal cplx_magn_resized_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
+   signal cplx_magn_resized_data_s: stereo_histogram_dtype := (others => (others => '0'));
+   signal cplx_magn_resized_last_s: std_logic_vector(L+R downto 0) := (others => '0');
+
+	signal oled_write_ready: std_logic;
+	signal oled_write_valid: std_logic;
+	signal oled_write_addr: std_logic_vector(8 downto 0);
+	signal oled_write_data: std_logic_vector(7 downto 0);
+
+    -- OLED
+	component OLEDCtrl is
+	port (
+		clk: in std_logic;
+		-- oled.wr
+		write_ready: out std_logic;
+		write_start: in std_logic;
+		write_ascii_data: in std_logic_vector(7 downto 0);
+		write_base_addr: in std_logic_vector(8 downto 0);
+		-- oled.ctrl
+		update_ready: out std_logic;
+		update_start: in std_logic;
+		disp_on_ready: out std_logic;
+		disp_on_start: in std_logic;
+		disp_off_ready: out std_logic;
+		disp_off_start: in std_logic;
+		toggle_disp_ready: out std_logic;
+		toggle_disp_start: in std_logic;
+		-- oled
+		sdin: out std_logic;
+		sclk: out std_logic;
+		dc: out std_logic;
+		res: out std_logic;
+		vbat: out std_logic;
+		vdd: out std_logic
+	);
+	end component OLEDCtrl;
+	
 begin
 
+	sys_clk_buf: IBUFG
+	port map (
+		I => clk100,
+		O => sys_clk
+	);
+	
+	-- sys clock reset bit gen.
+	process (sys_clk)
+	begin
+	if rising_edge (sys_clk) then
+		if sys_clk_rst_reg(sys_clk_rst_reg'high) = '1' then
+			sys_clk_rst_reg <= sys_clk_rst_reg(sys_clk_rst_reg'length-1 downto 1) & '0';
+		end if;
+	end if;
+	end process;
+
+	sys_clk_rst <= sys_clk_rst_reg(sys_clk_rst_reg'high);
+	
 	-- ######################
 	-- Audio Codec (Adau1761)
 	-- ######################
 	adau1761_drv_inst: entity ip_library.adau1761_top
 	port map (
-		clk100 => clk100,
-		clk48 => clk48_s,
-		clk48_rst => clk48_rst_s,
-		mclk => open, --adau_mclk,
+		sys_clk => sys_clk,
+		sys_clk_rst => sys_clk_rst,
+		mclk => adau_mclk,
 		-- I2C
 		scl => adau_scl,
 		sda => adau_sda,
@@ -138,14 +206,14 @@ begin
 	
 	--audio_tx_valid_s <= and_reduce(cic_interp_valid_s);
 
---stereo_data_path_gen: for i in 0 to L+R generate
---
+stereo_data_path_gen: for i in 0 to L+R generate
+
 --	stream_framer_inst: entity ip_library.axi4s_framer
 --	generic map (
 --		G_FRAME_LENGTH => C_OLED_X_WIDTH,
 --		G_DATA_WIDTH => C_AUDIO_DATA_WIDTH
 --	) port map (
---		clk => clk100,
+--		clk => sys_clk,
 --		-- stream (in)
 --		data_in_valid => audio_rx_valid_s,
 --		data_in_data => audio_rx_data_s(C_AUDIO_DATA_WIDTH*(i+1)-1 downto C_AUDIO_DATA_WIDTH*i),
@@ -168,7 +236,7 @@ begin
 --		G_CIC_N => 8,
 --		G_DATA_WIDTH => C_AUDIO_DATA_WIDTH
 --	) port map (
---		clk => clk100,
+--		clk => sys_clk,
 --		-- stream (in)
 --		data_in_valid => framer_valid_s(i),
 --		data_in_data => framer_data_s(i), 
@@ -192,7 +260,7 @@ begin
 --		G_CIC_N => 8,
 --		G_DATA_WIDTH => C_AUDIO_DATA_WIDTH
 --	) port map (
---		clk => clk100,
+--		clk => sys_clk,
 --		-- stream (in)
 --		stream_in_valid => cic_decim_valid_s(i),
 --		stream_in_data => cic_decim_data_s(i),
@@ -210,9 +278,9 @@ begin
 --	-- Frequency Domain (L+R)
 --	-- ######################
 --
---	latch_fft_sel_on_tlast: process (clk100)
+--	latch_fft_sel_on_tlast: process (sys_clk)
 --	begin
---	if rising_edge (clk100) then
+--	if rising_edge (sys_clk) then
 --		case fft_sel_reg is
 --			WHEN "000" =>
 --				if cic_valid_s(i) = '1' then
@@ -230,9 +298,9 @@ begin
 --		end case;
 --	end if;
 --	
---	sync_fft_data_sel: process (clk100)
+--	sync_fft_data_sel: process (sys_clk)
 --	begin
---	if rising_edge (clk100) then
+--	if rising_edge (sys_clk) then
 --		case fft_sel_reg is
 --			WHEN "000" =>
 --				if cic_valid_s(i) = '1' then
@@ -253,9 +321,9 @@ begin
 --	-- Xilinx FFT
 --	-- processes a single channel
 --	-- ##########################
---	xlnx_fft_chx_inst: xilinx_fft128_single_channel
+--	xlnx_fft_chx_inst: xilinx_fft256_single_channel
 --	port map (
---		aclk => clk100,
+--		aclk => sys_clk,
 --		-- config
 --		s_axis_config_tready => fft_config_ready_s(i),
 --		s_axis_config_tvalid => fft_config_valid_s(i),
@@ -282,10 +350,10 @@ begin
 --	-- Discard upper symetric spectrum
 --	axi4s_reframer_inst: entity ip_library.axi4s_reframer
 --	generic map (
---		G_FRAME_LENGTH => 128/2,
+--		G_FRAME_LENGTH => C_OLED_X_WIDTH,
 --		G_DATA_WIDTH => G_DATA_WIDTH
 --	) port map (
---		clk => clk100,
+--		clk => sys_clk,
 --		-- stream (in)
 --		stream_in_valid => fft_valid_s(i),
 --		stream_in_data => fft_data_s(i),
@@ -303,7 +371,7 @@ begin
 --	generic map (
 --		G_DATA_WIDTH => G_DATA_WIDTH
 --	) port map (
---		clk => clk100,
+--		clk => sys_clk,
 --		-- complex (in)
 --		cplx_ready => fft_reframed_ready_s(i),
 --		cplx_valid => fft_reframed_valid_s(i),
@@ -315,33 +383,84 @@ begin
 --		magnitude_last => cplx_magnitude_last_s(i)
 --	);
 --
---	magn_2_histogram_chx_inst: entity ip_library.histogram
+--	rescale_magn_y_axis: entity ip_library.signed_rounding
 --	generic map (
---		G_HISTOGRAM_X_PIXELS => C_OLED_X_WIDTH,
---		G_HISTOGRAM_Y_PIXELS => C_OLED_Y_HEIGHT,
---		G_DATA_WIDTH => G_DATA_WIDTH
+--		G_DIN_WIDTH => G_DATA_WIDTH,
+--		G_DOUT_WIDTH => C_OLED_Y_HEIGHT
 --	) port map (
---		clk => clk100,
---		-- magnitude (in)
---		magnitude_valid => cplx_magnitude_valid_s(i),
---		magnitude_data => cplx_magnitude_data_s(i),
---		magnitude_last => cplx_magnitude_last_s(i),
---		-- histogram (out)
---		histogram_eof => histogram_eof(s),
---		histogram_eol => histogram_eol(s),
---		histogram_pxl => histogram_pxl(s)
+--		clk => sys_clk,
+--		-- data (in)
+--		data_in_valid => cplx_magnitude_valid_s(i),
+--		data_in_data => cplx_magnitude_data_s(i),
+--		data_in_last => cplx_magnitude_last_s(i),
+--		-- data (out)
+--		data_out_valid => cplx_magn_resized_valid_s(i),
+--		data_out_data => cplx_magn_resized_data_s(i),
+--		data_out_last => cplx_magn_resize_last_s(i)
 --	);
---
---end generate; -- STEREO L+R 
 
-	--histogram_left_right_merger: entity ip_library.histogram_merge
-	--generic map (
-	--) port map (
-	--);
+	histogram_pattern_gen_inst: entity ip_library.histogram_ramp_pattern
+	generic map (
+		G_HISTOGRAM_WIDTH => C_OLED_X_WIDTH,
+		G_HISTOGRAM_HEIGHT => C_OLED_Y_HEIGHT
+	) port map (
+		clk => sys_clk,
+		-- stream (out)
+		data_out_ready => '1', 
+		data_out_valid => cplx_magn_resized_valid_s(i),
+		data_out_data => cplx_magn_resized_data_s(i),
+		data_out_last => cplx_magn_resized_last_s(i)
+	);
 
-	--oled_ctrl_inst: entity ip_library.oled_ctrl
-	--generic map (
-	--) port map (
-	--);
+end generate; -- STEREO L+R 
+
+	magn_2_histogram_chx_inst: entity ip_library.histogram
+	generic map (
+		G_HISTOGRAM_WIDTH => C_OLED_X_WIDTH,
+		G_HISTOGRAM_HEIGHT => C_OLED_Y_HEIGHT
+	) port map (
+		clk => sys_clk,
+		rst => '0',
+		-- magnitude (in)
+		magnitude_valid => cplx_magn_resized_valid_s(0),
+		magnitude_data => cplx_magn_resized_data_s(0),
+		magnitude_last => cplx_magn_resized_last_s(0),
+		-- oled ctrl
+		oled_disp_on_ready => '0',
+		oled_disp_on_start => open,
+		oled_disp_off_ready => '0',
+		oled_disp_off_start => open,
+		-- oled wdata
+		oled_wr_ready => '0',
+		oled_wr_start => open,
+		oled_wr_addr => open,
+		oled_wr_data => open
+	);
+
+	oled_ctrl_inst: OLEDCtrl
+	port map (
+		clk => sys_clk,
+		-- oled.wr
+		write_ready => oled_write_ready,
+		write_start => oled_write_valid,
+		write_ascii_data => oled_write_data,
+		write_base_addr => oled_write_addr,
+		-- oled.ctrl
+		update_ready => open,
+		update_start => '0',
+		disp_on_ready => open,
+		disp_on_start => '0',
+		disp_off_ready => open,
+		disp_off_start => '0',
+		toggle_disp_ready => open,
+		toggle_disp_start => '0',
+		-- oled
+		sdin => oled_sdin,
+		sclk => oled_sclk,
+		dc => oled_dc,
+		res => oled_res,
+		vbat => oled_vbat,
+		vdd => oled_vdd
+	);
 
 end rtl;
