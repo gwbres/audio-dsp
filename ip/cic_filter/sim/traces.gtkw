@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Mon Jul 20 18:05:59 2020
+[*] Fri Jul 24 15:15:04 2020
 [*]
 [dumpfile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.vcd"
-[dumpfile_mtime] "Mon Jul 20 17:37:56 2020"
-[dumpfile_size] 9175040
+[dumpfile_mtime] "Fri Jul 24 15:04:15 2020"
+[dumpfile_size] 514787
 [savefile] "/hdd/git/audio-dsp/ip/cic_filter/sim/traces.gtkw"
 [timestart] 0
 [size] 1440 791
 [pos] -1 -1
-*-28.000000 45000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.000000 75000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.dut.
 [treeopen] testbench.dut.g_cic_decimation_filter_gen.
@@ -26,46 +26,38 @@ testbench.clk
 -Stream (in)
 @28
 testbench.data_in_valid
-@22
-testbench.data_in_data[7:0]
+@420
+testbench.data_in_data[15:0]
 @28
 testbench.data_in_last
 @200
 -Integrators
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_valid
-@22
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_data[13:0]
+@420
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_data[21:0]
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stage_1_inst.data_out_last
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_valid
-@22
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_data[13:0]
-@29
+@420
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_data[21:0]
+@28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.integrator_stages_gen(1).integrator_stage_n_inst.data_out_last
 @200
 -Decimation
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_valid
-@22
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_data[13:0]
+@23
+testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.decim_data[21:0]
 @200
 -Comb filters
 @28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stage0.data_out_valid
-@22
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_filter_stage0.data_out_data[13:0]
-@28
 testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_valid
-@24
-testbench.dut.g_cic_decimation_filter_gen.cic_decim_filter_inst.comb_stages_gen(1).comb_filter_stage_n.data_out_data[13:0]
 @200
 -Stream (out)
 @28
 testbench.data_out_valid
-@24
-testbench.data_out_data[9:0]
-@28
 testbench.data_out_last
 [pattern_trace] 1
 [pattern_trace] 0

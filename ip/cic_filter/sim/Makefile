@@ -14,6 +14,7 @@ SOURCES += ../src/cic_interpolator.vhd
 SOURCES += ../src/cic_filter.vhd
 
 GFLAGS += --std=08
+STOP_TIME = 10us
 
 all: run_sim 
 
@@ -24,7 +25,7 @@ simulate: compile
 	$(GHDL) -e $(GFLAGS) $(TESTBENCH)
 
 run_sim: simulate
-	timeout 1s $(GHDL) -r $(GFLAGS) $(TESTBENCH) --vcd=traces.vcd
+	$(GHDL) -r $(GFLAGS) $(TESTBENCH) --vcd=traces.vcd --stop-time=$(STOP_TIME)
 
 waveform: run_sim
 	$(GTKWAVE) traces.gtkw

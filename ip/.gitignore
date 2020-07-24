@@ -1,7 +1,14 @@
 adau1761/src/clk100_clk24_synth
+
 i2s/sim/top/sim_project
 histogram/sim/project_1
+
+cic_filter/sim/stimulus.txt
+cic_filter/sim/output.txt
+cic_filter/sim/settings.txt
+
 oled/init_sequence_rom
 oled/charLib
 oled/pixel_buffer
+
 xilinx_fft256_single_channel
