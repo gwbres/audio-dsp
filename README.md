@@ -41,27 +41,40 @@ Then build an SD card image with (linux image + ref. design):
 make
 ```
 
-Open the ref. design with
+The firmware may build with other Vivado versions; in any case, it will not build for Vivado versions that do not have support for XPM macros builtin.
+
+Create the SD card with 
+
+```bash
+sudo dd if=$git/buildroot/output/images/sdcard.img of=/dev/sdX
+```
+
+After powering up your zedboard, the firmware gets automatically started. You can now feed an audio stream into the 'Line In' socket, and play the output from the 'HPH' socket.
+
+You can access the zedboard either by UART over USB or SSH over ethernet at address 192.168.0.10 (login: root, password: root)
+
+#### Reference Design
+
+After running *make* at least once, you can open the ref. design with
 
 ```bash
 vivado $git/design/[...]
 ```
 
-The firmware may build with other Vivado versions; in any case, it will not build for Vivado versions that do not have support for XPM macros builtin.
-
-The ref. design is embedded in /dev/mmbclkp0 of the SD card, it is automatically loaded at boot time, you can now access the zedboard either by UART over USB, or SSH over ethernet at 192.168.0.10.
-
-You can reflash the default firmware with:
+You can locate the default installed firmware with:
 
 ```bash
 ssh root@192.168.0.10
 mount /dev/mmcblkp1 /mnt
-cat /mnt/design.bit > /dev/xdevcfg
+ls /mnt/*.bin
 ```
 
-You can upload any firmware and follow the same process using *scp*
+You can upload and flash any firmware using *scp*
 
-You should now plug at feed an audio stream into the 'Line In' socket, and play the output stream from the 'HPH' socket.
+```bash
+scp firmware.bin root@192.168.0.10/lib/firmware
+echo 'firmware.bin' > /sys/class/manager
+```
 
 ## GUI
 
@@ -78,4 +91,3 @@ source $git/python-env.sh
 cd $git/python/gui
 ./gui.py
 ```
-
