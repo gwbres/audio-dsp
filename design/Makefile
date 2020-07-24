@@ -4,7 +4,10 @@ PROJECT = project_1
 BITSTREAM = $(PROJECT)/$(PROJECT).runs/impl_1/$(TOP)
 
 VIVADO = vivado -mode batch
-BOOTGEN = bootgen -w -arch zynq
+
+BOOTGEN  = bootgen -w
+BOOTGEN += -image bitstream.bif
+BOOTGEN += -arch zynq
 
 Q = @
 RM = rm -rf
@@ -18,7 +21,7 @@ $(BITSTREAM).bit:
 	
 $(BITSTREAM).bit.bin: $(BITSTREAM).bit
 	$(Q)echo "Converting bitstream file.."
-	$(BOOTGEN) -image bitstream.bif -process bitstream bin
+	$(BOOTGEN) -process_bitstream bin
 	$(Q)echo "$@ has been generated" 
 
 .PHONY: clean
