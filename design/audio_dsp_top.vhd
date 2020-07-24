@@ -65,10 +65,6 @@ architecture rtl of audio_dsp_top is
 	signal cic_decim_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
 	signal cic_decim_data_s: std_logic_vector(C_STEREO_DATA_WIDTH-1 downto 0) := (others => '0'); 
 	signal cic_decim_last_s: std_logic_vector(L+R downto 0) := (others => '0');
-	
-	signal cic_decim_valid_s: std_logic_vector(L+R downto 0) := (others => '0');
-	signal cic_decim_data_s: std_logic_vector(C_STEREO_DATA_WIDTH-1 downto 0) := (others => '0'); 
-	signal cic_decim_last_s: std_logic_vector(L+R downto 0) := (others => '0');
 
 begin
 

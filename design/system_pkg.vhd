@@ -15,6 +15,9 @@ package system_pkg is
 	constant C_CIC_FILTER_M: positive := 1; -- fixed
 	constant C_CIC_FILTER_N: positive := 6;
 	constant C_CIC_OUTPUT_WIDTH: positive := C_AUDIO_DATA_WIDTH + C_CIC_FILTER_R / 4;
+	
+	-- FFT
+	constant C_FFT_DATA_WIDTH: natural := 16;
 
 	-- Histrogram / OLED
 	constant C_OLED_X_WIDTH: natural := 128;
