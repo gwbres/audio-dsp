@@ -1,0 +1,4 @@
+all:
+{
+	project_1/project_1.runs/impl_1/audio_dsp_top.bit
+}
