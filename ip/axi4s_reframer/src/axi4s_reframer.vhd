@@ -52,6 +52,7 @@ begin
 					last_counter <= 0;
 					wait_for_tlast <= '1';
 				end if;
+			end if;
 		end if;
 	end if;
 	end process;
