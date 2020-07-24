@@ -11,12 +11,6 @@ from audio.wav import *
 from tools.os_utils import listfile
 from tools.xilinx import xlnx_coe_writer
 
-def _parseIntegerValue (self, content):
-	integer = 0
-	for i in range (0, len(content)):
-		integer += int(content[i]) << (8*i)
-	return integer
-
 def main (argv):
 	if len(argv) == 0:
 		profiles = listfile ('../../data/reverb-profiles/')
