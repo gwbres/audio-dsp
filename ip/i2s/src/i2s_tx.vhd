@@ -11,7 +11,9 @@ generic (
 port (
    clk: in std_logic;
 	rst: in std_logic;
-	-- TX buffer
+	------------------------
+	-- I2S async TX buffer
+	------------------------
 	almost_empty: out std_logic;
 	empty: out std_logic;
 	underflow: out std_logic;
@@ -81,8 +83,8 @@ begin
 		din => stereo_data,
 		wr_data_count => open,
 		-- Rd
-		rd_rst_busy => open,
 		rd_clk => bclk,
+		rd_rst_busy => open,
 		data_valid => fifo_data_valid_s,
 		rd_en => fifo_rd_en_s,
 		dout => fifo_dout_s,
